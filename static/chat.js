@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    var socket = io.connect('http://' + location.hostname + ':' + location.port);
 
     socket.on('connect', function() {
         socket.emit('joined', {});
