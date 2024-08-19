@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(function(){
     var socket = io.connect('http://' + location.hostname + ':' + location.port);
 
     socket.on('connect', function() {
