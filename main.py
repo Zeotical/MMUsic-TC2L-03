@@ -11,7 +11,7 @@ def chat():
 
 @socketio.on('joined')
 def handle_joined(data):
-    emit('message', {'username': 'System', 'text': 'Welcome to Music Chat'}, broadcast=True)
+    emit('message', {'username': 'System', 'text': 'Welcome to MMusic Chat'}, broadcast=True)
     
 @socketio.on('text')
 def handle_text(data):
