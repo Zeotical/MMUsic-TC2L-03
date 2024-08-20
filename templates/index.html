@@ -1,5 +1,15 @@
 {% extends"base.html" %} 
 
 {% block body%} 
-<h1>hello nyan</h1>
+
+<div class="container">
+    <h1>Welcome</h1>
+  <form action="" >
+    <input type="text" name="username" placeholder="username" class="input-field">
+    <input type="password" name="password" placeholder="password" class="input-field">
+    <input type="submit" value="login" class="btn btn-login"/>
+    <input type="button"  value="register" class="btn btn-register"/>
+ </form>
+</div>
+
 {% endblock %} 
