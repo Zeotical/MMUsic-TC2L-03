@@ -14,7 +14,7 @@ db = SQLAlchemy(app)
 # Database Model # a model represents a single row in our db each user has their own model
 class user(db.Model):
     # Class Variables
-    id = db.Column(db.integer,primary_key=True)
+    id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
 
