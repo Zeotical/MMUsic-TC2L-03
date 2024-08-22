@@ -12,7 +12,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 db = SQLAlchemy(app)
 
 # Database Model # a model represents a single row in our db each user has their own model
-class user(db.Model):
+class User(db.Model):
     # Class Variables
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
@@ -30,6 +30,26 @@ def home():
     if "username" in session:
         return redirect(url_for ("dashboard"))
     return render_template("index.html")
+
+# Login
+@app.route("/login", methods=["POST"]) #what does this route do what kind of methods are we using- sending/recieving info?
+def login():
+    #collect into from the form
+    username = request.form["username"]
+    password = request.form["password"]
+    user = User.query.filter_by(username=username).first()
+    if user and user.check_password (password):
+        session["username"] = username
+        return redirect(url_for("dashboard"))
+    else:
+        return render_template("index.html")
+    #check if it's in the db/login
+    #otherwise show homepage
+# Register
+# Dashboard
+# Logout
+
+
 
 
 
