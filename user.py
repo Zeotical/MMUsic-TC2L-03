@@ -57,8 +57,8 @@ def login():
 # Register
 @app.route("/register", methods=["POST"])
 def register():
-    username = request.form["username"]
-    password = request.form["password"]
+    username = request.form["username_register"]
+    password = request.form["password_register"]
     user = User.query.filter_by(username=username).first()
     if user:
         return render_template("index.html", error="User already here!")
