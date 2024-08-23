@@ -2,10 +2,17 @@
 from flask import Flask,render_template,request,redirect, session, url_for 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.secret_key="ily"
 
+#Configure login_manager
+# login_manager= LoginManager() #creating an incstance of LoginM
+# login_manager.init_app(app)
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.get(user_id)
 # Configure SQL Alchmey
 app.config["SQLALCHEMY_DATABASE_URI"]= "sqlite:///userinfo.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
@@ -16,7 +23,7 @@ class User(db.Model):
     # Class Variables
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
-    password = db.Column(db.String(50), nullable=False)
+    password_hash = db.Column(db.String(50), nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -29,7 +36,8 @@ class User(db.Model):
 def home():
     if "username" in session:
         return redirect(url_for ("dashboard"))
-    return render_template("index.html")
+    else:
+     return render_template("index.html")
 
 # Login
 @app.route("/login", methods=["POST"]) #what does this route do what kind of methods are we using- sending/recieving info?
@@ -45,6 +53,7 @@ def login():
         return render_template("index.html")
     #check if it's in the db/login
     #otherwise show homepage
+
 # Register
 @app.route("/register", methods=["POST"])
 def register():
@@ -61,13 +70,19 @@ def register():
         session["username"]= username
         return redirect(url_for("dashboard"))
 # Dashboard
+@app.route("/dashboard")
+def dashboard():
+    if "username" in session:
+        return render_template("dashboard.html", username= session["username"])
+    return redirect(url_for("home"))
 # Logout
+@app.route("/logout")
+def logout():
+    session.pop("username", None)
+    return redirect(url_for("home"))
 
 
-
-
-
-if __name__ in "__main__":
+if __name__ =="__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True)
