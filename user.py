@@ -46,6 +46,20 @@ def login():
     #check if it's in the db/login
     #otherwise show homepage
 # Register
+@app.route("/register", methods=["POST"])
+def register():
+    username = request.form["username"]
+    password = request.form["password"]
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return render_template("index.html", error="User already here!")
+    else:
+        new_user = User(username=username)
+        new_user.set_password(password)
+        db.session.add(new_user)
+        db.session.commit()
+        session["username"]= username
+        return redirect(url_for("dashboard"))
 # Dashboard
 # Logout
 
