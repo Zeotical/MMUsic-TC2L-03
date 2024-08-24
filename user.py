@@ -40,9 +40,10 @@ def home():
      return render_template("index.html")
 
 # Login
-@app.route("/login", methods=["POST"]) #what does this route do what kind of methods are we using- sending/recieving info?
+@app.route("/login", methods=["GET","POST"]) #what does this route do what kind of methods are we using- sending/recieving info?
 def login():
     #collect into from the form
+ if request.method == "POST":
     username = request.form["username"]
     password = request.form["password"]
     user = User.query.filter_by(username=username).first()
@@ -51,6 +52,7 @@ def login():
         return redirect(url_for("dashboard"))
     else:
         return render_template("index.html")
+ return render_template("login.html")  
     #check if it's in the db/login
     #otherwise show homepage
 
