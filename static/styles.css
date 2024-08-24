@@ -1,5 +1,13 @@
-/* */
+/*REGISTRATION PAGE*/
 
-p {
- color: blueviolet;
+.input-field {
+ display: block;   
+ margin: 0 auto;   
+ height: 100px;
+ width: 250px;
+}
+
+::placeholder {
+text-align: center;
+font-size: xx-large;
 }
