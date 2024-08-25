@@ -22,17 +22,11 @@ def add_text(content):
 @app.route('/', methods=['GET', 'POST'])
 def chat():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT Lyrics FROM songs")
-    mysql.connection.commit()
-    fetchdata = cur.fetchall()
-    cur.close()
-    
-    cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM messages")
     mysql.connection.commit()
     results = cur.fetchall()
     cur.close()
-    return render_template('chat.html', data=fetchdata, results=results)
+    return render_template('chat.html', results=results)
 
 
 @socketio.on('joined')
