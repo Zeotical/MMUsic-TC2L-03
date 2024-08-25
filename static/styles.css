@@ -1,13 +1,29 @@
-/*REGISTRATION PAGE*/
+/*REGISTRATION AND LOGIN PAGE*/
+
+
+
+h1{
+text-align: center;
+}
 
 .input-field {
  display: block;   
  margin: 0 auto;   
- height: 100px;
+ height: 75px;
  width: 250px;
+ border-radius: 25px;
+ font-size: xx-large;
+ text-align: center;
 }
 
 ::placeholder {
 text-align: center;
 font-size: xx-large;
+}
+
+.btn-register, .btn-login , .lnk-login{
+    display: block;
+    margin: 0 auto;
+    font-size: xx-large;
+    border-radius: 10px;
 }
