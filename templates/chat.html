@@ -5,17 +5,26 @@
 {% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="page-header">
-        <h1 style="text-align:center;">MMUsic</h1>
+<div class="container; bg-primary">
+    <div class="pg-header;">
+        <h1 style="text-align:center">MMUsic</h1>
     </div>
 </div>
 <div id="chat-window" class="card-body overflow-auto border border-secondary border-1; mx-auto" style="width: 1000px; height: 500px; margin-top: 50px;">
-    <ul id="messages" class="list-unstyled"></ul>
+    <form method="POST">
+        <ul id="messages" class="list-unstyled">{{messages}}</ul>
+    </form>
 </div>
-<div class="form-group; mx-auto" style="width: 1000px">
-    <input type="text" class="form-control" id="txt" placeholder="Type song's lyric/title here...">
-    <button type="submit" class="btn btn-default; border border-primary" id="send">Send</button>
+<div class="search-box; mx-auto" style="width: 1000px">
+    <div class="row">
+            <input type="text" name="text" placeholder="Type a song's lyric or title..." style="width: 900px" id="text" autocomplete="off"/>
+            <button type="submit" class="btn btn-default; border border-primary" id="send">Send</button>
+    </div>
+    <div class="col-md-5" style="position:relative; margin-top:-100px; margin-left:-10px">
+        <div class="list-group" id="show-list">
+            <ul>{{data}}</ul>
+        </div>
+    </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>

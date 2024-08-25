@@ -10,12 +10,12 @@ $(function(){
     });
 
     $('#send').click(function() {
-        var message = $('#txt').val();
+        var message = $('#text').val();
         socket.emit('text', {text: message});
-        $('#txt').val('');
+        $('#text').val('');
     });
 
-    $('#txt').on('keypress', function(e) {
+    $('#text').on('keypress', function(e) {
         if(e.which === 13) {
             $('#send').click();
         }
