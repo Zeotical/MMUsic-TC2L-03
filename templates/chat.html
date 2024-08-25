@@ -14,7 +14,7 @@
     <form method="POST">
         <ul id="messages" class="list-unstyled">
             {% for message in results %}
-            <li>{{ message[1] }}</li>
+            <li>User: {{ message[0] }}</li>
             {% endfor %}
         </ul>
     </form>
