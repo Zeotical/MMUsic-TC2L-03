@@ -2,7 +2,7 @@
 from flask import Flask,render_template,request,redirect, session, url_for 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+# from flask_login import LoginManager
 
 app = Flask(__name__)
 app.secret_key="ily"
@@ -13,6 +13,7 @@ app.secret_key="ily"
 # @login_manager.user_loader
 # def load_user(user_id):
 #     return User.get(user_id)
+
 # Configure SQL Alchmey
 app.config["SQLALCHEMY_DATABASE_URI"]= "sqlite:///userinfo.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
