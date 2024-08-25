@@ -5,19 +5,23 @@
 {% endblock %}
 
 {% block body %}
-<div class="container; bg-primary">
+<div class="container; bg-primary" style="padding-top:10px; padding-bottom:20px">
     <div class="pg-header;">
-        <h1 style="text-align:center">MMUsic</h1>
+        <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic</strong></h1>
     </div>
 </div>
-<div id="chat-window" class="card-body overflow-auto border border-secondary border-1; mx-auto" style="width: 1000px; height: 500px; margin-top: 50px;">
+<div id="chat-window" class="card-body overflow-auto border border-secondary border-1; mx-auto rounded" style="width: 1000px; height: 500px; margin-top: 20px;">
     <form method="POST">
-        <ul id="messages" class="list-unstyled">{{messages}}</ul>
+        <ul id="messages" class="list-unstyled">
+            {% for message in results %}
+            <li>{{ message[1] }}</li>
+            {% endfor %}
+        </ul>
     </form>
 </div>
-<div class="search-box; mx-auto" style="width: 1000px">
-    <div class="row">
-            <input type="text" name="text" placeholder="Type a song's lyric or title..." style="width: 900px" id="text" autocomplete="off"/>
+<div class="search-box; mx-auto" style="width: 1000px;margin-top: 10px">
+    <div class="form-row justify-content-center">
+            <input type="text" name="text" placeholder="Type a song's lyric or title..." style="width: 930px; margin-right: 10px;" id="text" autocomplete="off"/>
             <button type="submit" class="btn btn-default; border border-primary" id="send">Send</button>
     </div>
     <div class="col-md-5" style="position:relative; margin-top:-100px; margin-left:-10px">

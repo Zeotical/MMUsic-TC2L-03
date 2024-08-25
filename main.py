@@ -12,28 +12,28 @@ mysql = MySQL(app)
 app.config['SECRET_KEY'] = 'chatroom1234'
 socketio = SocketIO(app)
 
+def add_text(content):
+    query = "INSERT INTO messages (content) VALUES (%s);"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (content,))
+    mysql.connection.commit()
+    cur.close()
+
 @app.route('/', methods=['GET', 'POST'])
 def chat():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT Lyrics FROM songs WHERE Lyrics = %s")
+    cur.execute("SELECT Lyrics FROM songs")
     mysql.connection.commit()
     fetchdata = cur.fetchall()
     cur.close()
-    if request.method == "POST":
-        message = request.form['message']
-        if message:
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO message (content) VALUES (%s)" , (message,))
-            mysql.connection.commit()
-    try:
-        cur.execute("SELECT * FROM messages")
-        mysql.connection.commit()
-        messages = cur.fetchall()
-    except Exception as e:
-        print(f"Error fetching messages: {e}")
-        
+    
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM messages")
+    mysql.connection.commit()
+    results = cur.fetchall()
     cur.close()
-    return render_template('chat.html', data=fetchdata)
+    return render_template('chat.html', data=fetchdata, results=results)
+
 
 @socketio.on('joined')
 def handle_joined(data):
@@ -43,7 +43,9 @@ def handle_joined(data):
 def handle_text(data):
     text = data['text']
     username = 'User'
+    add_text(text)
     emit('message', {'username': username, 'text': text}, broadcast=True)
+    
 
 if __name__ == "__main__":
     socketio.run(app, debug=True)
