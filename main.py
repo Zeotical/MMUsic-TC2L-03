@@ -13,7 +13,7 @@ app.config['SECRET_KEY'] = 'chatroom1234'
 socketio = SocketIO(app)
 
 def add_text(content):
-    query = "INSERT INTO messages (content) VALUES (%s);"
+    query = "INSERT INTO messages (content) VALUES (%s);" #insert typed word to database(chat) table(messages) column(content)
     cur = mysql.connection.cursor()
     cur.execute(query, (content,))
     mysql.connection.commit()
@@ -31,14 +31,14 @@ def chat():
 
 @socketio.on('joined')
 def handle_joined(data):
-    emit('message', {'username': 'System', 'text': 'Welcome to MMusic Chat'}, broadcast=True)
+    emit('message', {'username': 'System', 'text': 'Welcome to MMusic Chat'}, broadcast=True) #send Welcome to MMUsic Chat to all the connected clients.
     
 @socketio.on('text')
 def handle_text(data):
-    text = data['text']
+    text = data['text'] #Extracts the message text from the received data
     username = 'User'
-    add_text(text)
-    emit('message', {'username': username, 'text': text}, broadcast=True)
+    add_text(text) #Calls add_text() to save the message to the database
+    emit('message', {'username': username, 'text': text}, broadcast=True) #Emits the message to all connected clients
     
 
 if __name__ == "__main__":
