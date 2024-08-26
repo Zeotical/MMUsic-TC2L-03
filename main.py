@@ -13,7 +13,7 @@ app.config['SECRET_KEY'] = 'chatroom1234'
 socketio = SocketIO(app)
 
 def add_text(content):
-    query = "INSERT INTO messages (content) VALUES (%s);" #insert typed word to database(chat) table(messages) column(content)
+    query = "INSERT INTO messages (content) VALUES (%s);" #insert typed messages to database(chat) table(messages) column(content)
     cur = mysql.connection.cursor()
     cur.execute(query, (content,))
     mysql.connection.commit()
