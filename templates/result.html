@@ -1,0 +1,48 @@
+<h3>{{ rows }} Results found</h3>
+<div style="overflow-x: auto;">
+    <table id="Songs">
+        <thead>
+            <tr id="column">
+                <th>Genre</th>
+                <th>Performer</th>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in search %}
+            <tr>
+                <td>{{ song['genre'] }}</td>
+                <td>{{ song['performer'] }}</td>
+                <td>{{ song['title'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    #Songs {
+        font-family: "Times New Roman", Times, serif;
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+        border: 1px solid #e74545; /* Adds a border around the table */
+    }
+    #Songs th, #Songs td {
+        text-align: left;
+        padding: 12px;
+        font-size: large;
+        border-bottom: 1px solid #ddd; /* Adds a border under each cell */
+    }
+    #Songs th {
+        background-color: #f2f2f2; /* Light grey background for headers */
+        font-weight: bold;
+        border-bottom: 2px solid #ddd; /* Thicker border under header */
+    }
+    #Songs tr:nth-child(even) {
+        background-color: #f9f9f9; /* Light background for even rows */
+    }
+    #Songs tr:hover {
+        background-color: #ddd; /* Background color on hover */
+    }
+</style>
