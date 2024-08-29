@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SEARCH FOR A SONG</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="table">
+        <h1 class="title">Search For A Song</h1>
+        <div class="search">
+            <div class="row">
+                <div class="words">
+                    <input type="text" id="keywords" name="keywords" placeholder="Enter keywords">
+                </div>
+            </div>
+            <div id='result'></div>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(function(){
+        function load_data(query = '') {
+            $.ajax({
+                url: "/ajaxlivesearch",
+                method: "POST",
+                data: {query: query},
+                success: function(data) {
+                    $('#result').html(data.resulthtml);
+                }
+            });
+        }
+
+        $('#keywords').keyup(function(){
+            var search = $(this).val();
+            if(search !== '') {
+                load_data(search);
+            } else {
+                load_data()
+            }
+        });
+    });
+</script>
+<style>
+body {
+    background-color: antiquewhite;
+}
+.title {
+    font-family: "Lucida Console", "Courier New", monospace;
+    text-align: center;
+}
+.search {
+    text-align: center;
+    margin-top: 40px;
+}
+#keywords {
+    width: 60%;
+    height: 30px;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 10px;
+}
+</style>
+</html>
