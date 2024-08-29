@@ -6,10 +6,21 @@
 <form id="auth-form" action="{{url_for("login")}}" method="post"> <!--send info to db a post method-->
     <input type="text" name="username" placeholder="username" class="input-field" required>
     <br>
-    <input type="password" name="password" placeholder="password" class="input-field" required>
+    <input type="password" name="password" placeholder="password" id="ps" class="input-field" required>
+    <input type="checkbox" onclick="see_ps()"> Show password
     <br>
     <input type="submit" value="login" class="btn-login"/>
  </form>
 </div>
  
+<script>
+    function see_ps(){
+      var x= document.getElementById("ps");
+      if (x.type=="password") {
+        x.type="text"; }
+        else 
+        { x.type="password";}  
+      } 
+    </script>
+
 {% endblock %}
