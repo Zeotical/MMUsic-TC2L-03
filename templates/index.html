@@ -5,10 +5,10 @@
 <div class="register">
     <h1>Register</h1>
   <form id="register_form" action="{{url_for("register")}}" method="post" >
-    <input type="text" name="username_register" placeholder="username" class="input-field" required>
+    <input type="text" name="username_register" placeholder="username" class="input-field" required autofocus>
     <br>
-    <input type="password" name="password_register" placeholder="password" id= "ps" class="input-field" required>
-    <input type="checkbox" onclick="see_ps()" > Show password
+    <input type="password" name="password_register" placeholder="password" id= "ps" class="input-field" required autofocus>
+    <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps()" id="image" width="45" height="34" >
     <br>
     <input type="submit"  value="register" class="btn-register"/>
   </form>  
@@ -17,11 +17,14 @@
 
  <script>
   function see_ps(){
+    var y=document.getElementById("image")
     var x= document.getElementById("ps");
     if (x.type=="password") {
-      x.type="text"; }
+      x.type="text"; 
+      y.src="https://www.svgrepo.com/show/453440/visibility.svg"; }
       else 
-      { x.type="password";}  
+      { x.type="password";
+        y.src="https://www.svgrepo.com/show/453442/visibility-off.svg";           }  
     } 
   </script>
   

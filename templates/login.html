@@ -4,23 +4,26 @@
 <div class="login">
 <h1>Welcome to login</h1>
 <form id="auth-form" action="{{url_for("login")}}" method="post"> <!--send info to db a post method-->
-    <input type="text" name="username" placeholder="username" class="input-field" required>
+    <input type="text" name="username" placeholder="username" class="input-field" required autofocus>
     <br>
-    <input type="password" name="password" placeholder="password" id="ps" class="input-field" required>
-    <input type="checkbox" onclick="see_ps()"> Show password
+    <input type="password" name="password" placeholder="password" id="ps" class="input-field" required autofocus>
+    <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps()" id="image"> 
     <br>
     <input type="submit" value="login" class="btn-login"/>
  </form>
 </div>
  
 <script>
-    function see_ps(){
-      var x= document.getElementById("ps");
-      if (x.type=="password") {
-        x.type="text"; }
-        else 
-        { x.type="password";}  
-      } 
+  function see_ps(){
+    var y=document.getElementById("image")
+    var x= document.getElementById("ps");
+    if (x.type=="password") {
+      x.type="text"; 
+      y.src="https://www.svgrepo.com/show/453440/visibility.svg"; }
+      else 
+      { x.type="password";
+        y.src="https://www.svgrepo.com/show/453442/visibility-off.svg";           }  
+    } 
     </script>
 
 {% endblock %}
