@@ -12,12 +12,16 @@ mysql = MySQL(app)
 app.config['SECRET_KEY'] = 'chatroom1234'
 socketio = SocketIO(app)
 
-def add_text(content):
-    query = "INSERT INTO messages (content) VALUES (%s);" #insert typed messages to database(chat) table(messages) column(content)
+def add_text(chatroomID, content):
+    query = "INSERT INTO messages (chatroomID, content) VALUES (%s, %s);" #insert typed messages to database(chat) table(messages) column(content)
     cur = mysql.connection.cursor()
-    cur.execute(query, (content,))
-    mysql.connection.commit()
-    cur.close()
+    try:
+        cur.execute(query, (chatroomID, content))
+        mysql.connection.commit()
+    except Exception as e:
+        print(f"Error saving message to database: {e}")
+    finally:
+        cur.close()
 
 @app.route('/', methods=['GET', 'POST'])
 def chatroom():
@@ -50,15 +54,15 @@ def chat(chatroomID):
 def handle_joined(data):
     chatroomID = data['chatroomID']
     join_room(chatroomID)
-    emit('message', {'username': 'System', 'text': f'Welcome to {chatroomID} Chat'}, broadcast=True) #send Welcome to MMUsic Chat to all the connected clients.
+    emit('message', {'username': 'System', 'text': f'Welcome to Chatroom {chatroomID}'}, room=chatroomID) #send Welcome to MMUsic Chat to all the connected clients.
     
 @socketio.on('text')
 def handle_text(data):
     text = data['text'] #Extracts the message text from the received data
-    username = 'User'
     chatroomID = data['chatroomID']
+    username = 'User'
     add_text(chatroomID, text) #Calls add_text() to save the message to the database
-    emit('message', {'username': username, 'text': text}, broadcast=True, room=chatroomID) #Emits the message to all connected clients
+    emit('message', {'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
     
 
 if __name__ == "__main__":
