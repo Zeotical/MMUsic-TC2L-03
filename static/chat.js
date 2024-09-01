@@ -1,8 +1,9 @@
 $(function(){
     var socket = io.connect('http://' + location.hostname + ':' + location.port);
+    var chatroomID = '{{ chatroomID }}';
 
     socket.on('connect', function() {
-        socket.emit('joined', {}); //This notifies the server that a new user has joined the chat
+        socket.emit('joined', {chatroomID: chatroomID}); //This notifies the server that a new user has joined the chat
     });
 
     socket.on('message', function(data) {
@@ -11,7 +12,7 @@ $(function(){
 
     $('#send').click(function() {
         var message = $('#text').val();
-        socket.emit('text', {text: message}); //Emits a 'text' event to the server with the message
+        socket.emit('text', {text: message, chatroomID: chatroomID}); //Emits a 'text' event to the server with the message
         $('#text').val('');
     });
 

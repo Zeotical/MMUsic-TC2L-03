@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request
-from flask_socketio import SocketIO, emit
+from flask import Flask, render_template, request, redirect, url_for
+from flask_socketio import SocketIO, emit, join_room
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
@@ -20,25 +20,45 @@ def add_text(content):
     cur.close()
 
 @app.route('/', methods=['GET', 'POST'])
-def chat():
+def chatroom():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM messages")
+    if request.method == 'POST':
+        selected_genre = request.form.get('genre')
+        cur.execute('SELECT chatroomID FROM chatroom WHERE genre_id = %s', (selected_genre,))
+        chatroom = cur.fetchone()
+        mysql.connection.commit()
+        cur.close()
+        if chatroom:
+            return redirect(url_for('chatroom', chatroomID=chatroom['chatroomID']))
+    cur.execute('SELECT chatroomID, genre_name FROM genres')
+    genres = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return render_template('chatroom.html', genres=genres)
+    
+@app.route('/chatroom/<int:chatroomID>', methods=['GET', 'POST'])
+def chat(chatroomID):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT content FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
     mysql.connection.commit()
     results = cur.fetchall()
     cur.close()
-    return render_template('chat.html', results=results)
+    return render_template('chat.html', results=results, chatroomID=chatroomID)
 
 
 @socketio.on('joined')
 def handle_joined(data):
-    emit('message', {'username': 'System', 'text': 'Welcome to MMusic Chat'}, broadcast=True) #send Welcome to MMUsic Chat to all the connected clients.
+    chatroomID = data['chatroomID']
+    join_room(chatroomID)
+    emit('message', {'username': 'System', 'text': f'Welcome to {chatroomID} Chat'}, broadcast=True) #send Welcome to MMUsic Chat to all the connected clients.
     
 @socketio.on('text')
 def handle_text(data):
     text = data['text'] #Extracts the message text from the received data
     username = 'User'
-    add_text(text) #Calls add_text() to save the message to the database
-    emit('message', {'username': username, 'text': text}, broadcast=True) #Emits the message to all connected clients
+    chatroomID = data['chatroomID']
+    add_text(chatroomID, text) #Calls add_text() to save the message to the database
+    emit('message', {'username': username, 'text': text}, broadcast=True, room=chatroomID) #Emits the message to all connected clients
     
 
 if __name__ == "__main__":
