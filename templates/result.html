@@ -12,8 +12,8 @@
             {% for song in search %}
             <tr>
                 <td>{{ song['genre'] }}</td>
-                <td>{{ song['performer'] }}</td>
-                <td>{{ song['title'] }}</td>
+                <td><a href="/song/{{ song['id'] }}">{{ song['performer'] }}</a></td>
+                <td><a href="/playsong/{{ song['id'] }}">{{ song['title'] }}</a></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -26,23 +26,23 @@
         border-collapse: collapse;
         width: 100%;
         margin-top: 20px;
-        border: 1px solid #e74545; /* Adds a border around the table */
+        border: 1px solid #e74545; 
     }
     #Songs th, #Songs td {
         text-align: left;
         padding: 12px;
         font-size: large;
-        border-bottom: 1px solid #ddd; /* Adds a border under each cell */
+        border-bottom: 1px solid #ddd; 
     }
     #Songs th {
-        background-color: #f2f2f2; /* Light grey background for headers */
+        background-color: #f2f2f2; 
         font-weight: bold;
-        border-bottom: 2px solid #ddd; /* Thicker border under header */
+        border-bottom: 2px solid #ddd; 
     }
     #Songs tr:nth-child(even) {
-        background-color: #f9f9f9; /* Light background for even rows */
+        background-color: #f9f9f9; 
     }
     #Songs tr:hover {
-        background-color: #ddd; /* Background color on hover */
+        background-color: #ddd; 
     }
 </style>

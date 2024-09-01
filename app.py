@@ -47,6 +47,29 @@ def ajaxlivesearch():
     cursor.close()
     return jsonify({'resulthtml': render_template('result.html', search=search_results, rows=total_results)})
 
-
+@app.route('/song/<int:song_id>')
+def song_detail(song_id):
+    cursor = mysql.connection.cursor()
+    query = "SELECT * FROM search WHERE id = %s"
+    cursor.execute(query, (song_id,))
+    song = cursor.fetchone()
+    cursor.close()
+    if song:
+        return render_template('performer_detail.html', song=song)
+    else:
+        return 'Not Found', 404
+    
+@app.route('/playsong/<int:song_id>')
+def playsong(song_id):
+    cursor = mysql.connection.cursor()
+    query = "SELECT * FROM search WHERE id = %s"
+    cursor.execute(query, (song_id,))
+    song = cursor.fetchone()
+    cursor.close()
+    if song:
+        return render_template('song_play.html', song=song)
+    else:
+        return 'Not Found', 404
+    
 if __name__ == "__main__":
     app.run(debug=True)
