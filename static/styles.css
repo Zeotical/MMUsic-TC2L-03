@@ -28,7 +28,11 @@ font-size: xx-large;
     border-radius: 10px;
 }
 
-.image{
-    width: 44;
-    height: 23;
+#image {
+    display: block;   
+    position: relative;
+    bottom: 55px;
+    left: 830px;
+    width: 30px !important;
+    height: 30px !important;
 }
