@@ -12,10 +12,9 @@ $(function(){
 
     $('#send').click(function() {
         var message = $('#text').val();
-        if (message) {
-            socket.emit('text', {text: message, chatroomID: chatroomID}); //Emits a 'text' event to the server with the message
-            $('#text').val('');
-        }
+        console.log("Sending message:", message, "to chatroom ID:", chatroomID);
+        socket.emit('text', {text: message, chatroomID: chatroomID}); //Emits a 'text' event to the server with the message
+        $('#text').val('');
     });
 
     $('#text').on('keypress', function(e) {

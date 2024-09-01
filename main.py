@@ -13,11 +13,13 @@ app.config['SECRET_KEY'] = 'chatroom1234'
 socketio = SocketIO(app)
 
 def add_text(chatroomID, content):
-    query = "INSERT INTO messages (chatroomID, content) VALUES (%s, %s);" #insert typed messages to database(chat) table(messages) column(content)
-    cur = mysql.connection.cursor()
     try:
+        print(f"Attempting to insert message: '{content}' into chatroom ID: {chatroomID}")
+        query = "INSERT INTO messages (chatroomID, content) VALUES (%s, %s);" #insert typed messages to database(chat) table(messages) column(content)
+        cur = mysql.connection.cursor()
         cur.execute(query, (chatroomID, content))
         mysql.connection.commit()
+        print("Message successfully added.")
     except Exception as e:
         print(f"Error saving message to database: {e}")
     finally:
@@ -54,7 +56,7 @@ def chat(chatroomID):
 def handle_joined(data):
     chatroomID = data['chatroomID']
     join_room(chatroomID)
-    emit('message', {'username': 'System', 'text': f'Welcome to Chatroom {chatroomID}'}, room=chatroomID) #send Welcome to MMUsic Chat to all the connected clients.
+    emit('message', {'username': 'System', 'text': 'Welcome to Chatroom'}, room=chatroomID) #send Welcome to Chatroom to all the connected clients.
     
 @socketio.on('text')
 def handle_text(data):
