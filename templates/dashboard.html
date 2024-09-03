@@ -7,5 +7,16 @@
   Welcome to your dashboard   
 </p>  
 <a href="{{url_for("logout")}}" class="btn btn-logout">Logout</a>
+#pfpstuff
 </div>
+<div class="profile_setup">
+<form>
+  <input type="file" name="pfp" >
+  <input type="text" name="usrname_change" id="userchange" placeholder="{{username}}" class="input-field">
+  <input type="submit" value="save">
+</form>
+</div>
+
+
+
 {% endblock %}
