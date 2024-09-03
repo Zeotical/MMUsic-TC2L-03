@@ -1,2 +1,5 @@
 venv/
 flask-auth/
+__pycache__/
+*.pyc
+
