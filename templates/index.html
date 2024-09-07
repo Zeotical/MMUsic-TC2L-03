@@ -11,11 +11,11 @@
     <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="image" >
 
     <div class="btn-box">
-      <button type="button">Next</button>
+      <button type="button" id="next">Next</button>
     </div>
 
 
-    <form id="form2" action="{{url_for("register")}}" method="post" >
+  <form id="form2" action="{{url_for("register")}}" method="post" >
     <h1>Profile setup</h1>  
     <input type="text" name="username_register" placeholder="username" class="input-field" required autofocus>
     <br>
@@ -23,14 +23,15 @@
     <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="image" >
 
     <div class="btn-box">
-      <button type="button">Back</button>
+      <button type="button" id="back">Back</button>
       <input type="submit"  value="register" class="btn-register"/>
     </div>
   </form>
   
   <div class="step-row">
-    <div class="stwp_col"><small>Step 1</small></div>
-    <div class="stwp_col"><small>Step 2</small></div>
+    <div id="progress"></div>
+    <div class="step-col"><small>Step 1</small></div>
+    <div class="step-col"><small>Step 2</small></div>
   </div>
     
   <a href="{{url_for("login")}}" class="lnk-login">Already have an account? Login !</a>
@@ -45,8 +46,13 @@
       y.src="https://www.svgrepo.com/show/453440/visibility.svg"; }
       else 
       { x.type="password";
-        y.src="https://www.svgrepo.com/show/453442/visibility-off.svg";           }  
+        y.src="https://www.svgrepo.com/show/453442/visibility-off.svg";}  
     } 
+   var form1 = document.getElementById("register_form"); 
+   var form2 = document.getElementById("form2");  
+   var next = document.getElementById("next");
+   var back = document.getElementById("back");
+   next.onclick = function(){} 
   </script>
   
 {% endblock %} 
