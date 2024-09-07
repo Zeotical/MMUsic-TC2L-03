@@ -10,10 +10,12 @@ body {
     background-color: blueviolet;
 }
 
-.register {
+.register { 
    background: #fff; 
    margin: 8% auto;
    position: relative;
+   padding-top: 50px; /* Adds space above form to make sure step bar is visible */
+
 }
 .input-field {
  display: block;   
@@ -57,11 +59,13 @@ form button {
 }
 
 #form2{
-    left: 450px;
+    position: relative;
+    left: 50px;
+    margin-right: 0;
 }
 
 .step-row{
-    width: 36px;
+    width: 360px;
     height: 40px;
     margin: 0 auto;
     display:flex;
@@ -77,12 +81,31 @@ form button {
     position: relative;
 }
 
+#progress{
+    position: absolute;
+    height: 100%;
+    width: 120px;
+    background: linear-gradient(to right,#ff105f,#ffad06);
+}
+
+#progress::after {
+    content: '';
+    height: 0;
+    width: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    position: absolute;
+    right: -20px;
+    top: 0;
+    border-left: 20px solid #ffad06;
+}
+
 
 #image {
     display: block;   
     position: relative;
     bottom: 55px;
     left: 830px;
-    width: 30px !important;
-    height: 30px !important;
+    width: 30px;
+    height: 30px;
 }
