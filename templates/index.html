@@ -27,15 +27,16 @@
       <input type="submit"  value="register" class="btn-register"/>
     </div>
   </form>
-  
   <div class="step-row">
     <div id="progress"></div>
     <div class="step-col"><small>Step 1</small></div>
     <div class="step-col"><small>Step 2</small></div>
+    <br>
   </div>
     
-  <a href="{{url_for("login")}}" class="lnk-login">Already have an account? Login !</a>
 </div>
+<a href="{{url_for("login")}}" class="lnk-login">Already have an account? Login !</a>
+
 
  <script>
   function see_ps(){
@@ -48,11 +49,24 @@
       { x.type="password";
         y.src="https://www.svgrepo.com/show/453442/visibility-off.svg";}  
     } 
-   var form1 = document.getElementById("register_form"); 
-   var form2 = document.getElementById("form2");  
-   var next = document.getElementById("next");
-   var back = document.getElementById("back");
-   next.onclick = function(){} 
+  var form1 = document.getElementById("register_form"); 
+  var form2 = document.getElementById("form2");  
+
+  var next = document.getElementById("next");
+  var back = document.getElementById("back");
+
+  var progress = document.getElementById("progress");
+
+  next.onclick = function(){
+    form1.style.up = "-450px";
+    form2.style.up = "40px";
+    progress.style.width ="240px"; 
+  }
+  back.onclick = function(){
+      form1.style.up = "40px"
+      form2.style.up = "450px" 
+      progress.style.width ="120px";  
+   } 
   </script>
   
 {% endblock %} 
