@@ -17,8 +17,7 @@
 
   <form id="form2" action="{{url_for("register")}}" method="post" >
     <h1>Profile setup</h1>  
-    <input type="file" name="pfp-select" placeholder="username" class="input-field" onchange="preview()" required autofocus>
-    <img id="frame" src="" width="100px" height="100px"/>
+    <input type="image" id="frame" src="" width="100px" height="100px"  />
     <div class="btn-box">
       <button type="button" id="back">Back</button>
       <input  type="submit"  value="register" class="btn-register"/>
@@ -60,14 +59,21 @@
     progress.style.width ="240px"; 
   }
   back.onclick = function(){
-      form1.style.left = "40px"
-      form2.style.left = "450px" 
+      form1.style.left = "40px";
+      form2.style.left = "450px" ;
       progress.style.width ="120px";  
    } 
 
 function preview() {
-    frame.src=URL.createObjectURL(event.target.files[0]);
 } 
+frame.onclick=  function() {
+  var z = document.getElementById("frame");
+  z.type ="file";
+  frame.src=URL.createObjectURL(event.target.files[0]);
+
+  
+
+}
   </script>
   
 {% endblock %} 
