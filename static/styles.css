@@ -35,8 +35,6 @@ font-size: xx-large;
     background: transparent;
 }
 
-
-
 #image {
     display: block;   
     position: relative;
@@ -62,7 +60,7 @@ font-size: xx-large;
     margin: 8% auto;
     border-radius: 5px;
     position: relative;
-    overflow: hdden;
+    overflow: hidden;
  }
 
 
@@ -102,6 +100,11 @@ form button {
 
 
 #form2{
+    left: 450px;
+}
+
+
+#form3{
     left: 450px;
 }
 
