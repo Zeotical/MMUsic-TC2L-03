@@ -10,26 +10,6 @@ body {
     background-color: blueviolet;
 }
 
-.register { 
-   width: 360px;
-   height: 400px;
-   background: #fff; 
-   margin: 8% auto;
-   border-radius: 5px;
-   position: relative;
-   padding-top: 50px; /* Adds space above form to make sure step bar is visible */
-   overflow: hidden;
-
-}
-
-.register form{
-    width: 280px;
-    position: absolute;
-    top: 100px;
-    left: 40px;
-    transition:0.5s;
-}
-
 .input-field {
  display: block;   
  margin: 0 auto;   
@@ -53,11 +33,52 @@ font-size: xx-large;
     cursor: pointer;
 }
 
+
+
+#image {
+    display: block;   
+    position: relative;
+    bottom: 55px;
+    left: 830px;
+    width: 30px;
+    height: 30px;
+}
+
+.register { 
+    width: 360px;
+    height: 400px;
+    background: #fff; 
+    margin: 8% auto;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidd
+ }
+
+
+.register form{
+    width: 280px;
+    position: absolute;
+    top: 100px;
+    left: 40px;
+    transition:0.5s;
+}
+
+form input{
+    width: 100%;
+    padding: 10px 5px;
+    margin: 5px 0;
+    border: 0;
+    border-bottom: 1px solid #999;
+    outline: none;
+    background: transparent;
+}
+
 .btn-box{
     width: 100%;
     margin: 30px auto;
     text-align: center;
 }
+
 
 form button {
     width: 110px;
@@ -71,10 +92,9 @@ form button {
     cursor: pointer;
 }
 
+
 #form2{
-    position: relative;
-    left: 50px;
-    margin-right: 0;
+    left: 450px;
 }
 
 .step-row{
@@ -112,14 +132,4 @@ form button {
     top: 0;
     border-left: 20px solid #ffad06;
     transition: 1s;
-}
-
-
-#image {
-    display: block;   
-    position: relative;
-    bottom: 55px;
-    left: 830px;
-    width: 30px;
-    height: 30px;
 }
