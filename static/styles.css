@@ -141,3 +141,7 @@ form button {
     border-left: 20px solid #ffad06;
     transition: 1s;
 }
+
+#frame{
+    border-radius: 50%;
+}
