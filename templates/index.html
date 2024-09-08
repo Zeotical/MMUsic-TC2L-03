@@ -12,15 +12,18 @@
 
     <div class="btn-box">
       <button type="button" id="next">Next</button>
+      <input  type="submit"  value="register" class="btn-register"/>
+
     </div>
   </form>
 
   <form id="form2" action="{{url_for("register")}}" method="post" >
     <h1>Profile setup</h1>  
-    <input type="image" id="frame" src="" width="100px" height="100px"  />
+    <input type="file" name="pfp-select"  id="file" onchange="preview()">
+    <img  id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
+    
     <div class="btn-box">
       <button type="button" id="back">Back</button>
-      <input  type="submit"  value="register" class="btn-register"/>
     </div>
   </form>
   <div class="step-row">
@@ -65,15 +68,16 @@
    } 
 
 function preview() {
-} 
-frame.onclick=  function() {
-  var z = document.getElementById("frame");
-  z.type ="file";
-  frame.src=URL.createObjectURL(event.target.files[0]);
 
+  frame.src = URL.createObjectURL(event.target.files[0]);
   
+} 
 
-}
+ function trigger_fileinput(){
+  document.getElementById("file").click();
+
+ }
+  
   </script>
   
 {% endblock %} 

@@ -143,6 +143,16 @@ form button {
 }
 
 #frame{
+    display: block;   
+    margin: 0 auto; 
     border-radius: 50%;
-    background-color: aliceblue;
+    border: none;
+    outline: none;
+    background-color: white;
 }
+
+
+#file{
+    display: none;
+}
+
