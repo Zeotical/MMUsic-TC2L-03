@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Chatrooms</title>
+{% endblock %}
+
+{% block body %}
+<h2>Select a Genre</h2>
+<ul>
+    {% for genre in genres %}
+    <li><a href="{{ url_for('chat', chatroomID=genre[0]) }}">{{ genre[1] }}</a></li>
+    {% endfor %}
+</ul>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+{% endblock %}
