@@ -3,8 +3,8 @@
 {% block body%} 
 
 <div class="register">
-    <h1>Register</h1>
   <form id="register_form" action="{{url_for("register")}}" method="post" >
+    <h1>Register</h1>
     <input type="text" name="username_register" placeholder="username" class="input-field" required autofocus>
     <br>
     <input type="password" name="password_register" placeholder="password" id= "ps" class="input-field" required autofocus>
@@ -13,7 +13,7 @@
     <div class="btn-box">
       <button type="button" id="next">Next</button>
     </div>
-
+  </form>
 
   <form id="form2" action="{{url_for("register")}}" method="post" >
     <h1>Profile setup</h1>  
@@ -24,7 +24,7 @@
 
     <div class="btn-box">
       <button type="button" id="back">Back</button>
-      <input type="submit"  value="register" class="btn-register"/>
+      <input  type="submit"  value="register" class="btn-register"/>
     </div>
   </form>
   <div class="step-row">
@@ -58,13 +58,13 @@
   var progress = document.getElementById("progress");
 
   next.onclick = function(){
-    form1.style.up = "-450px";
-    form2.style.up = "40px";
+    form1.style.left = "-450px";
+    form2.style.left = "40px";
     progress.style.width ="240px"; 
   }
   back.onclick = function(){
-      form1.style.up = "40px"
-      form2.style.up = "450px" 
+      form1.style.left = "40px"
+      form2.style.left = "450px" 
       progress.style.width ="120px";  
    } 
   </script>
