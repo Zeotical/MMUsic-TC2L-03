@@ -7,7 +7,7 @@ text-align: center;
 }
 
 body {
-    background-color: blueviolet;
+    background-color: beige;
 }
 
 .input-field {
@@ -27,10 +27,12 @@ font-size: xx-large;
 
 .btn-register, .btn-login , .lnk-login{
     display: block;
+    width:100%;
     margin: 0 auto;
     font-size: xx-large;
     border-radius: 10px;
     cursor: pointer;
+    background: transparent;
 }
 
 
@@ -38,7 +40,16 @@ font-size: xx-large;
 #image {
     display: block;   
     position: relative;
-    bottom: 55px;
+    bottom: 77px;
+    right: -220px;
+    width: 30px;
+    height: 30px;
+}
+
+#lgimage {
+    display: block;   
+    position: relative;
+    bottom: 77px;
     left: 830px;
     width: 30px;
     height: 30px;
@@ -46,12 +57,12 @@ font-size: xx-large;
 
 .register { 
     width: 360px;
-    height: 400px;
+    height: 600px;
     background: #fff; 
     margin: 8% auto;
     border-radius: 5px;
     position: relative;
-    overflow: hidd
+    overflow: hdden;
  }
 
 
@@ -67,9 +78,6 @@ form input{
     width: 100%;
     padding: 10px 5px;
     margin: 5px 0;
-    border: 0;
-    border-bottom: 1px solid #999;
-    outline: none;
     background: transparent;
 }
 

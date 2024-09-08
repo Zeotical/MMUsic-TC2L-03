@@ -7,14 +7,14 @@
     <input type="text" name="username" placeholder="username" class="input-field" required autofocus>
     <br>
     <input type="password" name="password" placeholder="password" id="ps" class="input-field" required autofocus>
-    <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="image"> 
+    <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="lgimage"> 
     <input type="submit" value="login" class="btn-login"/>
  </form>
 </div>
  
 <script>
   function see_ps(){
-    var y=document.getElementById("image")
+    var y=document.getElementById("lgimage")
     var x= document.getElementById("ps");
     if (x.type=="password") {
       x.type="text"; 
