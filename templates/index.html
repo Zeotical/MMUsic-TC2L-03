@@ -5,7 +5,7 @@
 <div class="register">
   <form id="register_form" action="{{url_for("register")}}" method="post" >
     <h1>Register</h1>
-    <input type="text" name="username_register" placeholder="username" class="input-field" required autofocus>
+    <input type="text" name="username_register" placeholder="username" id="username_register"class="input-field" required autofocus>
     <br>
     <input type="password" name="password_register" placeholder="password" id= "ps" class="input-field" required autofocus>
     <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="image" >
@@ -27,12 +27,23 @@
       <button type="button" id="next2">Next</button>
     </div>
   </form>  
-  <form id="form3" action="{{url_for("register")}}" method="post" >
+  <form id="form3" action="{{url_for("register")}}" method="post" onsubmit="submit()">
     <h1>Music Genre Selection</h1>  
-    <input type="checkbox" name="music"  id="music" >
+    <input type="hidden" name="hidden1" id="hidden1" />
+    <input type="hidden" name="hidden2" id="hidden2" />  
+
+    <input type="checkbox" name="music1"  id="music1" >    
+    <label for="music1">Eletronic Pop</label>
+    <input type="checkbox" name="music2"  id="music2" >    
+    <label for="music2">R&B</label>
+    <input type="checkbox" name="music3"  id="music3" >    
+    <label for="music3">Hip Hop</label>
 
     <div class="btn-box">
       <button type="button" id="back2">Back</button>
+      <input  type="submit"  value="register" class="btn-register"/>
+
+
     </div>  
   </form>
   <div class="step-row">
@@ -104,6 +115,12 @@ function preview() {
 
  }
   
+  function submit() {
+  document.getElementById("hidden1").value = document.getElementById("username_register").value;
+  document.getElementById("hidden2").value = document.getElementById("ps").value;
+  
+
+};
   </script>
   
 {% endblock %} 
