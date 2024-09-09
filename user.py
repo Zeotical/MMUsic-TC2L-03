@@ -5,12 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 # from flask_login import LoginManager
 
 app = Flask(__name__)
-app.secret_key="ily"
+app.secret_key="user_authentication11"
 
 #Configure login_manager
 # login_manager= LoginManager() #creating an incstance of LoginM
 # login_manager.init_app(app)
-# @login_manager.user_loader
+# @login_manager.user_loader 
 # def load_user(user_id):
 #     return User.get(user_id)
 
