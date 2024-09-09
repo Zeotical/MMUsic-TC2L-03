@@ -6,6 +6,10 @@ h1{
 text-align: center;
 }
 
+body {
+    background-color: beige;
+}
+
 .input-field {
  display: block;   
  margin: 0 auto;   
@@ -23,7 +27,135 @@ font-size: xx-large;
 
 .btn-register, .btn-login , .lnk-login{
     display: block;
+    width:100%;
     margin: 0 auto;
     font-size: xx-large;
     border-radius: 10px;
+    cursor: pointer;
+    background: transparent;
 }
+
+#image {
+    display: block;   
+    position: relative;
+    bottom: 77px;
+    right: -220px;
+    width: 30px;
+    height: 30px;
+}
+
+#lgimage {
+    display: block;   
+    position: relative;
+    bottom: 77px;
+    left: 830px;
+    width: 30px;
+    height: 30px;
+}
+
+.register { 
+    width: 360px;
+    height: 600px;
+    background: #fff; 
+    margin: 8% auto;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+ }
+
+
+.register form{
+    width: 280px;
+    position: absolute;
+    top: 100px;
+    left: 40px;
+    transition:0.5s;
+}
+
+form input{
+    width: 100%;
+    padding: 10px 5px;
+    margin: 5px 0;
+    background: transparent;
+}
+
+.btn-box{
+    width: 100%;
+    margin: 30px auto;
+    text-align: center;
+}
+
+
+form button {
+    width: 110px;
+    height: 35px;
+    margin: 0 10px;
+    background: linear-gradient(to right,#ff105f,#ffad06);
+    border-radius: 30px;
+    border: 0;
+    outline: none;
+    color:#fff;
+    cursor: pointer;
+}
+
+
+#form2{
+    left: 450px;
+}
+
+
+#form3{
+    left: 450px;
+}
+
+.step-row{
+    width: 360px;
+    height: 40px;
+    margin: 0 auto;
+    display:flex;
+    align-items: center;
+    box-shadow: 0 -1px 5px -1px #000;
+    position: relative;
+}
+
+.step-col{
+    width: 120px;
+    text-align: center;
+    color: #333;
+    position: relative;
+}
+
+#progress{
+    position: absolute;
+    height: 100%;
+    width: 120px;
+    background: linear-gradient(to right,#ff105f,#ffad06);
+}
+
+#progress::after {
+    content: '';
+    height: 0;
+    width: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    position: absolute;
+    right: -20px;
+    top: 0;
+    border-left: 20px solid #ffad06;
+    transition: 1s;
+}
+
+#frame{
+    display: block;   
+    margin: 0 auto; 
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    background-color: white;
+}
+
+
+#file{
+    display: none;
+}
+

@@ -3,15 +3,124 @@
 {% block body%} 
 
 <div class="register">
-    <h1>Register</h1>
   <form id="register_form" action="{{url_for("register")}}" method="post" >
-    <input type="text" name="username_register" placeholder="username" class="input-field" required>
+    <h1>Register</h1>
+    <input type="text" name="username_register" placeholder="username" id="username_register"class="input-field" required autofocus>
     <br>
-    <input type="password" name="password_register" placeholder="password" class="input-field" required>
-    <br>
-    <input type="submit"  value="register" class="btn-register"/>
-  </form>  
-  <a href="{{url_for("login")}}" class="lnk-login">Already have an account? Login !</a>
-</div>
+    <input type="password" name="password_register" placeholder="password" id= "ps" class="input-field" required autofocus>
+    <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="image" >
 
+    <div class="btn-box">
+      <button type="button" id="next">Next</button>
+      <input  type="submit"  value="register" class="btn-register"/>
+
+    </div>
+  </form>
+
+  <form id="form2" action="{{url_for("register")}}" method="post" >
+    <h1>Profile Setup</h1>  
+    <input type="file" name="pfp-select"  id="file" onchange="preview()">
+    <img  id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
+
+    <div class="btn-box">
+      <button type="button" id="back">Back</button>
+      <button type="button" id="next2">Next</button>
+    </div>
+  </form>  
+  <form id="form3" action="{{url_for("register")}}" method="post" onsubmit="submit()">
+    <h1>Music Genre Selection</h1>  
+    <input type="hidden" name="hidden1" id="hidden1" />
+    <input type="hidden" name="hidden2" id="hidden2" />  
+
+    <input type="checkbox" name="music1"  id="music1" >    
+    <label for="music1">Eletronic Pop</label>
+    <input type="checkbox" name="music2"  id="music2" >    
+    <label for="music2">R&B</label>
+    <input type="checkbox" name="music3"  id="music3" >    
+    <label for="music3">Hip Hop</label>
+
+    <div class="btn-box">
+      <button type="button" id="back2">Back</button>
+      <input  type="submit"  value="register" class="btn-register"/>
+
+
+    </div>  
+  </form>
+  <div class="step-row">
+    <div id="progress"></div>
+    <div class="step-col"><small>Step 1</small></div>
+    <div class="step-col"><small>Step 2</small></div>
+    <div class="step-col"><small>Step 3</small></div>
+    <br>
+  </div>
+    
+</div>
+<a href="{{url_for("login")}}" class="lnk-login">Already have an account? Login !</a>
+
+
+ <script>
+  function see_ps(){
+    var y=document.getElementById("image")
+    var x= document.getElementById("ps");
+    if (x.type=="password") {
+      x.type="text"; 
+      y.src="https://www.svgrepo.com/show/453440/visibility.svg"; }
+      else 
+      { x.type="password";
+        y.src="https://www.svgrepo.com/show/453442/visibility-off.svg";}  
+    } 
+
+  var form1 = document.getElementById("register_form"); 
+  var form2 = document.getElementById("form2");
+  var form3 = document.getElementById("form3");  
+  
+
+  var next = document.getElementById("next");
+  var next2 = document.getElementById("next2");
+  var back = document.getElementById("back");
+  var back2 = document.getElementById("back2");
+
+  var progress = document.getElementById("progress");
+
+  next.onclick = function(){
+    form1.style.left = "-450px";
+    form2.style.left = "40px";
+    progress.style.width ="240px"; 
+  }
+  back.onclick = function(){
+      form1.style.left = "40px";
+      form2.style.left = "450px" ;
+      progress.style.width ="120px";  
+   } 
+  
+  next2.onclick = function(){
+    form2.style.left = "-450px";
+    form3.style.left = "40px";
+    progress.style.width ="360px"; 
+  }
+
+  back2.onclick = function(){
+    form2.style.left = "40px";
+    form3.style.left = "450px" ;
+    progress.style.width ="240px";  
+ } 
+function preview() {
+
+  frame.src = URL.createObjectURL(event.target.files[0]);
+  
+} 
+
+ function trigger_fileinput(){
+  document.getElementById("file").click();
+
+ }
+  
+  function submit() {
+  document.getElementById("hidden1").value = document.getElementById("username_register").value;
+  document.getElementById("hidden2").value = document.getElementById("ps").value;
+  
+
+};
+  </script>
+  
 {% endblock %} 
