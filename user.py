@@ -15,16 +15,17 @@ app.secret_key="user_authentication11"
 #     return User.get(user_id)
 
 # Configure SQL Alchmey
-app.config["SQLALCHEMY_DATABASE_URI"]= "sqlite:///userinfo.db"
+app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/Login db?unix_socket=/opt/lampp/var/mysql/mysql.sock"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 db = SQLAlchemy(app)
 
 # Database Model # a model represents a single row in our db each user has their own model
 class User(db.Model):
     # Class Variables
+    __tablename__ = 'User'
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
-    password_hash = db.Column(db.String(50), nullable=False)
+    password_hash = db.Column(db.String(1512), nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
