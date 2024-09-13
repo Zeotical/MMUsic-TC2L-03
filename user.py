@@ -15,7 +15,7 @@ app.secret_key="user_authentication11"
 #     return User.get(user_id)
 
 # Configure SQL Alchmey
-app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/Login db?unix_socket=/opt/lampp/var/mysql/mysql.sock"
+app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/registerdb?unix_socket=/opt/lampp/var/mysql/mysql.sock"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 db = SQLAlchemy(app)
 
@@ -61,8 +61,9 @@ def login():
 # Register
 @app.route("/register", methods=["POST"])
 def register():
-    username = request.form["username_register"]
-    password = request.form["password_register"]
+
+    username = request.form["hidden_username"]
+    password = request.form["hidden_password"]
     user = User.query.filter_by(username=username).first()
     if user:
         return render_template("index.html", error="User already here!")
