@@ -8,6 +8,8 @@ import os
 
 app = Flask(__name__)
 app.secret_key="user_authentication11"
+app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
+
 
 #Configure login_manager
 # login_manager= LoginManager() #creating an incstance of LoginM
@@ -51,7 +53,6 @@ def login():
  if request.method == "POST":
     username = request.form["username"]
     password = request.form["password"]
-    image = request.form["hidden_image"]
 
     user = User.query.filter_by(username=username).first()
     if user and user.check_password (password):
@@ -64,21 +65,28 @@ def login():
     #otherwise show homepage
 
 # Register
-@app.route("/register", methods=["POST"])
+@app.route("/register", methods=["GET","POST"])
 def register():
+    image_path=None
     print(request.form)  # This will print the form data in your console for debugging
     
     if 'pfp-select' in request.files:
-        picture_file = request.files['pfp-select']
+        image = request.files['pfp-select']
         # Save the image using save_picture function
-        picture_filename = save_picture(picture_file)
-    username = request.form["hidden_username"]
-    password = request.form["hidden_password"]
+        if image and image.filename != '':
+            random_hex = secrets.token_hex(8)
+            _, f_ext = os.path.splitext(image.filename)
+            image_path = random_hex + f_ext
+            image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
+            image_path = image.filename
+            print("image saved")
+    username = request.form.get("hidden_username")
+    password = request.form.get("hidden_password")
     user = User.query.filter_by(username=username).first()
     if user:
         return render_template("index.html", error="User already here!")
     else:
-        new_user = User(username=username)
+        new_user = User(username=username, image=image_path)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
@@ -98,17 +106,17 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("home"))
 
-app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
 
-# Saving profile pic
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'] , picture_fn)
+# # Saving profile pic
+# def save_picture(form_picture):
+#     random_hex = secrets.token_hex(8)
+#     _, f_ext = os.path.splitext(form_picture.filename)
+#     picture_fn = random_hex + f_ext
+#     picture_path = os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'] , picture_fn)
 
+#     form_picture.save(picture_path)
 
-    return picture_fn
+#     return picture_fn
 
 
 
