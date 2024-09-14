@@ -15,20 +15,23 @@
     </div>
   </form>
 
-  <form id="form2" action="{{url_for("register")}}" method="post" enctype="multipart/form-data" >
+  <form id="form2" action="{{url_for("register")}}" method="post" enctype="multipart/form-data" onsubmit="submitForm(event)" >
     <h1>Profile Setup</h1>  
+    <input type="hidden" name="hidden_username" id="hidden_username" />
+    <input type="hidden" name="hidden_password" id="hidden_password" />
     <input type="file" name="pfp-select"  id="file" onchange="preview()">
     <img  id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
-
+    
     <div class="btn-box">
       <button type="button" id="back">Back</button>
       <button type="button" id="next2">Next</button>
+      <input  type="submit"  value="register" class="btn-register"/>
+
     </div>
   </form>  
-  <form id="form3" action="{{url_for("register")}}" method="post" onsubmit="submitForm(event)">
+  <form id="form3" action="{{url_for("register")}}" method="post" onsubmit="submitForm(event)" enctype="multipart/form-data">
     <h1>Music Genre Selection</h1>  
-    <input type="hidden" name="hidden_username" id="hidden_username" />
-    <input type="hidden" name="hidden_password" id="hidden_password" />
+    
     <input type="hidden" name="hidden_image" id="hidden_image" />
 
 
