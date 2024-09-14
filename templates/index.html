@@ -15,7 +15,7 @@
     </div>
   </form>
 
-  <form id="form2" action="{{url_for("register")}}" method="post" >
+  <form id="form2" action="{{url_for("register")}}" method="post" enctype="multipart/form-data" >
     <h1>Profile Setup</h1>  
     <input type="file" name="pfp-select"  id="file" onchange="preview()">
     <img  id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
@@ -117,7 +117,7 @@ function preview() {
   function submitForm(event) {
     document.getElementById("hidden_username").value = document.getElementById("username").value;
     document.getElementById("hidden_password").value = document.getElementById("ps").value;
-    document.getElementById("hidden_image").value = document.getElementById("frame").value.src;
+    document.getElementById("hidden_image").value = document.getElementById("frame").src;
     return true;
 
 

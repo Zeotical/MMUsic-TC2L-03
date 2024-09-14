@@ -1,7 +1,9 @@
 #imports
-from flask import Flask,render_template,request,redirect, session, url_for 
+from flask import Flask,render_template,request,redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+import secrets
+import os
 # from flask_login import LoginManager
 
 app = Flask(__name__)
@@ -66,12 +68,12 @@ def login():
 def register():
     print(request.form)  # This will print the form data in your console for debugging
     
-    # Now fetch the image
-    image = request.form.get("hidden_image")
-    print(f"Image: {image}")  # Ensure this is not None
+    if 'pfp-select' in request.files:
+        picture_file = request.files['pfp-select']
+        # Save the image using save_picture function
+        picture_filename = save_picture(picture_file)
     username = request.form["hidden_username"]
     password = request.form["hidden_password"]
-    image = request.form["hidden_image"]
     user = User.query.filter_by(username=username).first()
     if user:
         return render_template("index.html", error="User already here!")
@@ -86,13 +88,29 @@ def register():
 @app.route("/dashboard")
 def dashboard():
     if "username" in session:
-        return render_template("dashboard.html", username= session["username"])
+     user = User.query.filter_by(username=session["username"]).first()
+
+     return render_template("dashboard.html", username= session["username"], user=user)
     return redirect(url_for("home"))
 # Logout
 @app.route("/logout")
 def logout():
     session.pop("username", None)
     return redirect(url_for("home"))
+
+app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
+
+# Saving profile pic
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'] , picture_fn)
+
+
+    return picture_fn
+
+
 
 # Profile info
 @app.route("/profile")
