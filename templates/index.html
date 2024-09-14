@@ -29,6 +29,7 @@
     <h1>Music Genre Selection</h1>  
     <input type="hidden" name="hidden_username" id="hidden_username" />
     <input type="hidden" name="hidden_password" id="hidden_password" />
+    <input type="hidden" name="hidden_image" id="hidden_image" />
 
 
     <input type="checkbox" name="music1"  id="music1" >    
@@ -106,8 +107,7 @@
 function preview() {
 
   frame.src = URL.createObjectURL(event.target.files[0]);
-  
-} 
+  } 
 
  function trigger_fileinput(){
   document.getElementById("file").click();
@@ -117,6 +117,10 @@ function preview() {
   function submitForm(event) {
     document.getElementById("hidden_username").value = document.getElementById("username").value;
     document.getElementById("hidden_password").value = document.getElementById("ps").value;
+    document.getElementById("hidden_image").value = document.getElementById("frame").value.src;
+    return true;
+
+
     
   
 

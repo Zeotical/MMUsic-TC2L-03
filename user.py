@@ -26,6 +26,7 @@ class User(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
     password_hash = db.Column(db.String(1512), nullable=False)
+    image = db.Column(db.String(2000) , nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -48,6 +49,8 @@ def login():
  if request.method == "POST":
     username = request.form["username"]
     password = request.form["password"]
+    image = request.form["hidden_image"]
+
     user = User.query.filter_by(username=username).first()
     if user and user.check_password (password):
         session["username"] = username
@@ -61,9 +64,14 @@ def login():
 # Register
 @app.route("/register", methods=["POST"])
 def register():
-
+    print(request.form)  # This will print the form data in your console for debugging
+    
+    # Now fetch the image
+    image = request.form.get("hidden_image")
+    print(f"Image: {image}")  # Ensure this is not None
     username = request.form["hidden_username"]
     password = request.form["hidden_password"]
+    image = request.form["hidden_image"]
     user = User.query.filter_by(username=username).first()
     if user:
         return render_template("index.html", error="User already here!")
@@ -86,6 +94,12 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("home"))
 
+# Profile info
+@app.route("/profile")
+def profile():
+    if "username" in session:
+        return render_template("profile.html" ,username=session["username"] )
+    return redirect(url_for("home"))
 
 if __name__ =="__main__":
     with app.app_context():
