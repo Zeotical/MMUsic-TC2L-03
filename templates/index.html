@@ -17,15 +17,13 @@
 
   <form id="form2" action="{{url_for("register")}}" method="post">
     <h1>Music Genre Selection</h1>  
-    
-    <input type="hidden" name="hidden_image" id="hidden_image" />
 
 
     <input type="checkbox" name="music1"  id="music1" >    
     <label for="music1">Eletronic Pop</label>
-    <input type="checkbox" name="music2"  id="music2" >    
+    <input type="checkbox" id="music2"  name="RB" onclick="updateHidden()" >    
     <label for="music2">R&B</label>
-    <input type="checkbox" name="music3"  id="music3" >    
+    <input type="checkbox" id="music3"  name="Hiphop" onclick="updateHidden()" >    
     <label for="music3">Hip Hop</label>
 
     <div class="btn-box">
@@ -38,6 +36,10 @@
     <h1>Profile Setup</h1>  
     <input type="hidden" name="hidden_username" id="hidden_username" />
     <input type="hidden" name="hidden_password" id="hidden_password" />
+    <input type="hidden" name="hidden_rb" id="hidden_rb" value="" />
+    <input type="hidden" name="hidden_hp" id="hidden_hp" value=""/>
+
+
     <input type="file" name="pfp-select"  id="file" onchange="preview()">
     <img  id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
     
@@ -121,13 +123,18 @@ function preview() {
     document.getElementById("hidden_username").value = document.getElementById("username").value;
     document.getElementById("hidden_password").value = document.getElementById("ps").value;
     document.getElementById("hidden_image").value = document.getElementById("frame").src;
+    
     return true;
 
 
     
   
 
-};
+}
+function updateHidden() {
+  document.getElementById("hidden_rb").value = document.getElementById("music2").checked ? '1' : '';
+  document.getElementById("hidden_hp").value = document.getElementById("music3").checked ? '1' : '';
+}
   </script>
   
 {% endblock %} 
