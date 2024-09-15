@@ -5,9 +5,9 @@
 <div class="register">
   <form id="register_form" action="{{url_for("register")}}" method="post" >
     <h1>Register</h1>
-    <input type="text" name="username_register" placeholder="username" id="username" class="input-field" required autofocus>
+    <input type="text" name="username_register" placeholder="username" id="username" class="input-field" required autofocus maxlength="25">
     <br>
-    <input type="password" name="password_register" placeholder="password" id= "ps" class="input-field" required autofocus>
+    <input type="password" name="password_register" placeholder="password" id= "ps" class="input-field" required autofocus maxlength="15">
     <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="image" >
 
     <div class="btn-box">
@@ -15,21 +15,7 @@
     </div>
   </form>
 
-  <form id="form2" action="{{url_for("register")}}" method="post" enctype="multipart/form-data" onsubmit="submitForm(event)" >
-    <h1>Profile Setup</h1>  
-    <input type="hidden" name="hidden_username" id="hidden_username" />
-    <input type="hidden" name="hidden_password" id="hidden_password" />
-    <input type="file" name="pfp-select"  id="file" onchange="preview()">
-    <img  id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
-    
-    <div class="btn-box">
-      <button type="button" id="back">Back</button>
-      <button type="button" id="next2">Next</button>
-      <input  type="submit"  value="register" class="btn-register"/>
-
-    </div>
-  </form>  
-  <form id="form3" action="{{url_for("register")}}" method="post" onsubmit="submitForm(event)" enctype="multipart/form-data">
+  <form id="form2" action="{{url_for("register")}}" method="post">
     <h1>Music Genre Selection</h1>  
     
     <input type="hidden" name="hidden_image" id="hidden_image" />
@@ -43,12 +29,26 @@
     <label for="music3">Hip Hop</label>
 
     <div class="btn-box">
-      <button type="button" id="back2">Back</button>
-      <input  type="submit"  value="register" class="btn-register"/>
-
-
+      <button type="button" id="back">Back</button>
+      <button type="button" id="next2">Next</button>
     </div>  
   </form>
+
+  <form id="form3" action="{{url_for("register")}}" method="post" onsubmit="submitForm(event)" enctype="multipart/form-data">
+    <h1>Profile Setup</h1>  
+    <input type="hidden" name="hidden_username" id="hidden_username" />
+    <input type="hidden" name="hidden_password" id="hidden_password" />
+    <input type="file" name="pfp-select"  id="file" onchange="preview()">
+    <img  id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
+    
+    <div class="btn-box">
+      <button type="button" id="back">Back</button>
+      
+      <input  type="submit"  value="register" class="btn-register"/>
+
+    </div>
+  </form>  
+
   <div class="step-row">
     <div id="progress"></div>
     <div class="step-col"><small>Step 1</small></div>

@@ -29,6 +29,7 @@ class User(db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
+    password = db.Column(db.String(15), unique=True, nullable=False)
     password_hash = db.Column(db.String(1512), nullable=False)
     image = db.Column(db.String(2000) , nullable=True)
 
@@ -65,7 +66,7 @@ def login():
     #otherwise show homepage
 
 # Register
-@app.route("/register", methods=["GET","POST"])
+@app.route("/register", methods=["POST"])
 def register():
     image_path=None
     print(request.form)  # This will print the form data in your console for debugging
@@ -80,13 +81,13 @@ def register():
             image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
             image_path = image.filename
             print("image saved")
-    username = request.form.get("hidden_username")
-    password = request.form.get("hidden_password")
+    username = request.form["hidden_username"]
+    password = request.form["hidden_password"]
     user = User.query.filter_by(username=username).first()
     if user:
         return render_template("index.html", error="User already here!")
     else:
-        new_user = User(username=username, image=image_path)
+        new_user = User(username=username, image=image_path, password=password)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
