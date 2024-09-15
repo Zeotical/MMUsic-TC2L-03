@@ -39,6 +39,16 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+class Music_genres(db.Model):
+    __tablename__ = 'Music_genres'
+    id = db.Column(db.Integer,primary_key=True)
+    RB = db.Column(db.Boolean,nullable=True)
+    Hiphop = db.Column(db.Boolean, nullable=True)
+
+
+
+
+
 #Routes
 @app.route("/")
 def home():
@@ -83,13 +93,19 @@ def register():
             print("image saved")
     username = request.form["hidden_username"]
     password = request.form["hidden_password"]
+    RB = request.form["hidden_rb"]
+    Hiphop = request.form["hidden_hp"]
+    rb= bool(RB)
+    hp=bool(Hiphop)
     user = User.query.filter_by(username=username).first()
     if user:
         return render_template("index.html", error="User already here!")
     else:
         new_user = User(username=username, image=image_path, password=password)
+        music = Music_genres(RB=rb,Hiphop=hp, )
         new_user.set_password(password)
         db.session.add(new_user)
+        db.session.add(music)
         db.session.commit()
         session["username"]= username
         return redirect(url_for("dashboard"))
