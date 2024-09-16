@@ -42,17 +42,27 @@ class User(db.Model):
 class Music_genres(db.Model):
     __tablename__ = 'Music_genres'
     id = db.Column(db.Integer,primary_key=True)
-    genre_names = db.Column(db.Text, nullable=True)
+    music_genres = db.Column(db.Text, nullable=False)
 
 
 class User_genre(db.Model):
     __tablename__ = 'User_genre'
     id = db.Column(db.Integer,primary_key=True)
-    user_id =  db.Column(db.Integer, nullable=True)
-    genre_id =  db.Column(db.Integer)
+    user_id =  db.Column(db.Integer,db.ForeignKey('User.id'),  nullable=False)
+    genre_id =  db.Column(db.Integer,db.ForeignKey('Music_genres.id'), nullable=False)
     genre_name = db.Column(db.Text, nullable=True)
 
+def get_user_genres():
+    results = db.session.query(
+        User.id.label('user_id'),
+        User.username,
+        User_genre.genre_id,
+        Music_genres.music_genres
+    ).join(User_genre, User.id == User_genre.user_id) \
+     .join(Music_genres, User_genre.genre_id == Music_genres.id) \
+     .all()
 
+    return results
 
 #Routes
 @app.route("/")
@@ -100,16 +110,27 @@ def register():
     password = request.form["hidden_password"]
     genre_name= request.form["hidden_rb"]
     # rb= bool(genre_name)
+    # Userid= User.id
+    # genid = Music_genres.id
     user = User.query.filter_by(username=username).first()
     if user:
         return render_template("index.html", error="User already here!")
     else:
         new_user = User(username=username, image=image_path, password=password)
-        music = User_genre(genre_name=genre_name, user_id=user )
         new_user.set_password(password)
         db.session.add(new_user)
-        db.session.add(music)
         db.session.commit()
+        # if genre_name  =="RB":
+        #     genre_id==2 
+
+    # Now create the User_genre instance with correct user_id and genre_id
+         
+        music = User_genre(genre_name=genre_name, user_id=new_user.id, genre_id =2)
+        db.session.add(music)
+
+    # Commit to save the User_genre instance
+        db.session.commit()
+
         session["username"]= username
         return redirect(url_for("dashboard"))
 # Dashboard
