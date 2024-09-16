@@ -19,12 +19,16 @@
     <h1>Music Genre Selection</h1>  
 
 
-    <input type="checkbox" name="music1"  id="music1" >    
-    <label for="music1">Eletronic Pop</label>
-    <input type="checkbox" id="music2"  name="RB" onclick="updateHidden()" >    
-    <label for="music2">R&B</label>
-    <input type="checkbox" id="music3"  name="Hiphop" onclick="updateHidden()" >    
-    <label for="music3">Hip Hop</label>
+    <div class="dropdown">
+      <button>Food</button>
+      <div class="content">
+        <input type="checkbox" id="music2"  name="RB" onclick="updateHidden()" >
+        <label for="music2">R&B</label>
+        <input type="checkbox" id="music3"  name="Hiphop" onclick="updateHidden()" >    
+        <label for="music3">Hip Hop</label>    
+    
+      </div>
+    </div>
 
     <div class="btn-box">
       <button type="button" id="back">Back</button>
