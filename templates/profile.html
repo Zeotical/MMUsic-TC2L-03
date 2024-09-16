@@ -2,14 +2,17 @@
 
 {% block body%} 
 
-<h1> THIS IS YOUR PROFILE PAGE</h1>
+<h1> THIS IS YOUR PROFILE PAGE{{username}}</h1>
  <h1> THIS IS YOUR PROFILE PAGE </h1>
+
+ <h1> Profile Image:</h1>
  {% if user.image %}
-     <img src="{{ url_for('static', filename='profile_pics/' + user.image) }}"   alt="Profile Picture"style="width: 100px; height:100px;>
+    <img src="{{ url_for('static', filename='profile_pics/' + user.image) }}"   alt="Profile Picture"style="width: 100px; height:100px";/>
  {% else %}
      <p>No profile picture uploaded.</p>
  {% endif %}
- 
+ <h1>Username:</h1>
+ {{username}}
 
 
 {% endblock %}
