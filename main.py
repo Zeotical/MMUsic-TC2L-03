@@ -93,7 +93,6 @@ def register():
             _, f_ext = os.path.splitext(image.filename)
             image_path = random_hex + f_ext
             image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
-            image_path = image.filename
             print("image saved")
     username = request.form["hidden_username"]
     password = request.form["hidden_password"]
@@ -103,10 +102,6 @@ def register():
 
     user = User.query.filter_by(username=username).first()
    
-    # rb= bool(genre_name)
-    # Userid= User.id
-    # genid = Music_genres.id
-    user = User.query.filter_by(username=username).first()
     if user:
         return render_template("index.html", error="User already here!")
     else:
@@ -144,24 +139,15 @@ def logout():
     return redirect(url_for("home"))
 
 
-# # Saving profile pic
-# def save_picture(form_picture):
-#     random_hex = secrets.token_hex(8)
-#     _, f_ext = os.path.splitext(form_picture.filename)
-#     picture_fn = random_hex + f_ext
-#     picture_path = os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'] , picture_fn)
-
-#     form_picture.save(picture_path)
-
-#     return picture_fn
-
-
 
 # Profile info
 @app.route("/profile")
 def profile():
-    if "username" in session:
-        return render_template("profile.html" ,username=session["username"] )
+    if "username" in session: 
+        user = User.query.filter_by(username=session["username"]).first()   
+        image = user.image  
+
+        return render_template("profile.html" ,username=session["username"], user=user, image=image )
     return redirect(url_for("home"))
 
 if __name__ =="__main__":
