@@ -52,17 +52,6 @@ class User_genre(db.Model):
     genre_id =  db.Column(db.Integer,db.ForeignKey('Music_genres.id'), nullable=False)
     genre_name = db.Column(db.Text, nullable=True)
 
-def get_user_genres():
-    results = db.session.query(
-        User.id.label('user_id'),
-        User.username,
-        User_genre.genre_id,
-        Music_genres.music_genres
-    ).join(User_genre, User.id == User_genre.user_id) \
-     .join(Music_genres, User_genre.genre_id == Music_genres.id) \
-     .all()
-
-    return results
 
 #Routes
 @app.route("/")
@@ -108,7 +97,12 @@ def register():
             print("image saved")
     username = request.form["hidden_username"]
     password = request.form["hidden_password"]
-    genre_name= request.form["hidden_rb"]
+    genres = request.form["hidden_genres"]  # This will return a string like 'hiphop,rb'
+    
+    genre_list = genres.split(',')  # Convert the string to a list
+
+    user = User.query.filter_by(username=username).first()
+   
     # rb= bool(genre_name)
     # Userid= User.id
     # genid = Music_genres.id
@@ -120,16 +114,18 @@ def register():
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
-        # if genre_name  =="RB":
-        #     genre_id==2 
 
-    # Now create the User_genre instance with correct user_id and genre_id
-         
-        music = User_genre(genre_name=genre_name, user_id=new_user.id, genre_id =2)
-        db.session.add(music)
+        for genre_name in genre_list:
+            genre = Music_genres.query.filter_by(music_genres=genre_name).first()
+            if genre:
+                music = User_genre(genre_name=genre_name, user_id=new_user.id, genre_id=genre.id)
+                db.session.add(music)
+                db.session.commit()
 
-    # Commit to save the User_genre instance
+        
         db.session.commit()
+        
+    
 
         session["username"]= username
         return redirect(url_for("dashboard"))

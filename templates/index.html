@@ -22,9 +22,9 @@
     <div class="dropdown">
       <button>Select Music Genres</button>
       <div class="content">
-        <input type="checkbox" id="mg1"  name="Hiphop" onclick="updateHidden()" >    
+        <input type="checkbox" id="mg1"  name="Hiphop" value="Hip hop" onclick="submitGenres()" >    
         <label for="mg1">Hip Hop</label>   
-        <input type="checkbox" id="mg2"  name="R&B" onclick="updateHidden()" >
+        <input type="checkbox" id="mg2"  name="R&B" value="R&B" onclick="submitGenres()" >
         <label for="mg2">R&B</label>
         <input type="checkbox" id="mg3"  name="Rock" onclick="updateHidden()" >
         <label for="mg3">Rock</label>
@@ -45,18 +45,16 @@
 
   <form id="form3" action="{{url_for("register")}}" method="post" onsubmit="submitForm(event)" enctype="multipart/form-data">
     <h1>Profile Setup</h1>  
-    <input type="hidden" name="hidden_username" id="hidden_username" />
-    <input type="hidden" name="hidden_password" id="hidden_password" />
-    <input type="hidden" name="hidden_rb" id="hidden_rb" value="" />
-    <input type="hidden" name="hidden_hp" id="hidden_hp" value=""/>
+    <input type="hidden" name="hidden_username" id="hidden_username" required />
+    <input type="hidden" name="hidden_password" id="hidden_password" required/>
+    <input type="hidden" name="hidden_genres" id="hidden_genres" />
 
 
     <input type="file" name="pfp-select"  id="file" onchange="preview()">
     <img  id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
     
     <div class="btn-box">
-      <button type="button" id="back">Back</button>
-      
+      <button type="button" id="back2">Back</button>
       <input  type="submit"  value="register" class="btn-register"/>
 
     </div>
@@ -142,9 +140,18 @@ function preview() {
   
 
 }
-function updateHidden() {
-  document.getElementById("hidden_rb").value = document.getElementById("mg2").checked ? 'RB' : '';
-  document.getElementById("hidden_hp").value = document.getElementById("music3").checked ? '1' : '';
+
+
+function submitGenres() {
+  var selectedGenres = [];
+  if (document.getElementById("mg1").checked) {
+      selectedGenres.push(document.getElementById("mg1").value);
+  }
+  if (document.getElementById("mg2").checked) {
+      selectedGenres.push(document.getElementById("mg2").value);
+  }
+  // Convert array to comma-separated string
+  document.getElementById("hidden_genres").value = selectedGenres.join(',');
 }
   </script>
   
