@@ -26,13 +26,13 @@
         <label for="mg1">Hip Hop</label>   
         <input type="checkbox" id="mg2"  name="R&B" value="R&B" onclick="submitGenres()" >
         <label for="mg2">R&B</label>
-        <input type="checkbox" id="mg3"  name="Rock" onclick="updateHidden()" >
+        <input type="checkbox" id="mg3"  name="Rock" value="Rock" onclick="submitGenres()" >
         <label for="mg3">Rock</label>
-        <input type="checkbox" id="mg4"  name="Electronic music" onclick="updateHidden()" >
+        <input type="checkbox" id="mg4"  name="Electronic music" value="Electronic music" onclick="submitGenres()" >
         <label for="mg4">Electronic music</label>
-        <input type="checkbox" id="mg5"  name="Pop" onclick="updateHidden()" >
+        <input type="checkbox" id="mg5"  name="Pop" onclick="submitGenres()" >
         <label for="mg5">Pop</label>
-        <input type="checkbox" id="mg6"  name="KPOP" onclick="updateHidden()" >
+        <input type="checkbox" id="mg6"  name="KPOP" onclick="submitGenres()" >
         <label for="mg6">KPOP</label>
       </div>
     </div>
@@ -135,10 +135,6 @@ function preview() {
     
     return true;
 
-
-    
-  
-
 }
 
 
@@ -150,6 +146,19 @@ function submitGenres() {
   if (document.getElementById("mg2").checked) {
       selectedGenres.push(document.getElementById("mg2").value);
   }
+  if (document.getElementById("mg3").checked) {
+    selectedGenres.push(document.getElementById("mg3").value);
+  }
+  if (document.getElementById("m4").checked) {
+  selectedGenres.push(document.getElementById("mg4").value);
+  }
+  if (document.getElementById("mg5").checked) {
+  selectedGenres.push(document.getElementById("mg5").value);
+  }
+  if (document.getElementById("mg6").checked) {
+    selectedGenres.push(document.getElementById("mg6").value);
+}
+  
   // Convert array to comma-separated string
   document.getElementById("hidden_genres").value = selectedGenres.join(',');
 }
