@@ -31,7 +31,7 @@
 
    <h1>Music Genre Selection</h1>  
 
-   <input type="hidden" name="edit_genre_selection" id="edit_genre_selection">
+   <input type="hidden" name="edit_genre" id="edit_genre">
 
    <div class="dropdown">
      <button>Select Music Genres</button>
@@ -100,7 +100,7 @@ function see_ps(){
 }
   
   // Convert array to comma-separated string
-  document.getElementById("edit_genre_selection").value = selectedGenres.join(',');
+  document.getElementById("edit_genre").value = selectedGenres.join(',');
 }
 </script>
 
