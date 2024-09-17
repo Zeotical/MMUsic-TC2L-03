@@ -31,13 +31,27 @@ class User(db.Model):
     username = db.Column(db.String(25), unique=True, nullable=False)
     password = db.Column(db.String(15), unique=True, nullable=False)
     password_hash = db.Column(db.String(1512), nullable=False)
-    image = db.Column(db.String(2000) , nullable=True)
+    image = db.Column(db.String(2000) , nullable=False, default='default.svg')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+class Music_genres(db.Model):
+    __tablename__ = 'Music_genres'
+    id = db.Column(db.Integer,primary_key=True)
+    music_genres = db.Column(db.Text, nullable=False)
+
+
+class User_genre(db.Model):
+    __tablename__ = 'User_genre'
+    id = db.Column(db.Integer,primary_key=True)
+    user_id =  db.Column(db.Integer,db.ForeignKey('User.id'),  nullable=False)
+    genre_id =  db.Column(db.Integer,db.ForeignKey('Music_genres.id'), nullable=False)
+    genre_name = db.Column(db.Text, nullable=True)
+
 
 #Routes
 @app.route("/")
@@ -68,22 +82,33 @@ def login():
 # Register
 @app.route("/register", methods=["POST"])
 def register():
-    image_path=None
+    image_path= 'default.svg'    
+
     print(request.form)  # This will print the form data in your console for debugging
     
     if 'pfp-select' in request.files:
         image = request.files['pfp-select']
-        # Save the image using save_picture function
+
+        # Save the image 
         if image and image.filename != '':
             random_hex = secrets.token_hex(8)
             _, f_ext = os.path.splitext(image.filename)
-            image_path = random_hex + f_ext
+            image_path = random_hex + f_ext 
             image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
-            image_path = image.filename
             print("image saved")
+        # else:
+        #     image_path= 'default.svg'    
+        #     # image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
+
+
     username = request.form["hidden_username"]
     password = request.form["hidden_password"]
+    genres = request.form["hidden_genres"]  # Returns a string like 'hiphop,rb'
+    
+    genre_list = genres.split(',')  # Converts the string to a list
+
     user = User.query.filter_by(username=username).first()
+   
     if user:
         return render_template("index.html", error="User already here!")
     else:
@@ -91,6 +116,19 @@ def register():
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
+
+        for genre_name in genre_list:
+            genre = Music_genres.query.filter_by(music_genres=genre_name).first()
+            if genre:
+                music = User_genre(genre_name=genre_name, user_id=new_user.id, genre_id=genre.id)
+                db.session.add(music)
+                db.session.commit()
+
+        
+        db.session.commit()
+        
+    
+
         session["username"]= username
         return redirect(url_for("dashboard"))
 # Dashboard
@@ -108,25 +146,39 @@ def logout():
     return redirect(url_for("home"))
 
 
-# # Saving profile pic
-# def save_picture(form_picture):
-#     random_hex = secrets.token_hex(8)
-#     _, f_ext = os.path.splitext(form_picture.filename)
-#     picture_fn = random_hex + f_ext
-#     picture_path = os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'] , picture_fn)
-
-#     form_picture.save(picture_path)
-
-#     return picture_fn
-
-
 
 # Profile info
-@app.route("/profile")
+@app.route("/profile", methods=["GET","POST"])
 def profile():
-    if "username" in session:
-        return render_template("profile.html" ,username=session["username"] )
-    return redirect(url_for("home"))
+        # form = profile_form()
+        user = User.query.filter_by(username=session["username"]).first()   
+        id = user.id
+        update= User.query.get_or_404(id)
+        # image = user.image  
+        if request.method =="POST":
+            update.username = request.form["edit_username"]
+            update.password = request.form["edit_password"] 
+
+            # Update pfp
+            if request.files["pfp-select"]:
+                image = request.files["pfp-select"]
+                
+                if image and image.filename != '':
+                    random_hex = secrets.token_hex(8)
+                    _, f_ext = os.path.splitext(image.filename)
+                    image_path = random_hex + f_ext 
+                    image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
+                    update.image = image_path
+                    print("image saved")
+            session["username"] = update.username
+         
+            db.session.commit()
+
+    
+        
+        return render_template("profile.html" , update=update, user=session["username"])
+
+        # return redirect(url_for("home"))
 
 if __name__ =="__main__":
     with app.app_context():

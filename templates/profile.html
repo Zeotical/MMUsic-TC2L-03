@@ -2,14 +2,60 @@
 
 {% block body%} 
 
-<h1> THIS IS YOUR PROFILE PAGE</h1>
+<a href="{{url_for("dashboard")}}" class="btn dashboard">Go back to chatrooms<a>
+<a href="{{url_for("logout" )}}" class="btn btn-logout">Logout</a>
+    
+
+<h1> THIS IS YOUR PROFILE PAGE{{update.username}}</h1>
  <h1> THIS IS YOUR PROFILE PAGE </h1>
- {% if user.image %}
-     <img src="{{ url_for('static', filename='profile_pics/' + user.image) }}"   alt="Profile Picture"style="width: 100px; height:100px;>
+
+ <h1> Profile Image:</h1>
+ {% if update.image %}
+    <img src="{{ url_for('static', filename='profile_pics/' + update.image)  }}"   alt="Profile Picture"style="width: 100px; height:100px";/>
  {% else %}
      <p>No profile picture uploaded.</p>
  {% endif %}
- 
+ <h1>Username:</h1>
+ {{update.username}}
 
+ <div class="register">
+ <form id="profile_form" action="{{url_for("profile")}}" method="post"  enctype="multipart/form-data">
+   <h1>Edit Profile info</h1>
+   <input type="text" name="edit_username" placeholder="{{update.username}}" id="profile_username" class="input-field" required autofocus maxlength="25">
+   <br>
+   <input type="password" name="edit_password" placeholder="{{update.password}}" id= "profile_password" class="input-field" required autofocus maxlength="15">
+   <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="image" >
+
+   <input type="file" name="pfp-select"  id="new_file" onchange="preview()">
+   <img src="{{ url_for('static', filename='profile_pics/' + update.image) }}" id="new_frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
+
+
+
+    <input  type="submit"  value="edit" class="btn-register"/>
+
+ </form>
+
+ <script>
+function see_ps(){
+        var y=document.getElementById("image")
+        var x= document.getElementById("profile_password");
+        if (x.type=="password") {
+          x.type="text"; 
+          y.src="https://www.svgrepo.com/show/453440/visibility.svg"; }
+          else 
+          { x.type="password";
+            y.src="https://www.svgrepo.com/show/453442/visibility-off.svg";}  
+        } 
+
+ function preview() {
+
+  new_frame.src = URL.createObjectURL(event.target.files[0]);
+  } 
+
+ function trigger_fileinput(){
+  document.getElementById("new_file").click();
+
+ }
+</script>
 
 {% endblock %}
