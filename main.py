@@ -31,7 +31,7 @@ class User(db.Model):
     username = db.Column(db.String(25), unique=True, nullable=False)
     password = db.Column(db.String(15), unique=True, nullable=False)
     password_hash = db.Column(db.String(1512), nullable=False)
-    image = db.Column(db.String(2000) , nullable=True)
+    image = db.Column(db.String(2000) , nullable=False, default='default.svg')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -82,7 +82,8 @@ def login():
 # Register
 @app.route("/register", methods=["POST"])
 def register():
-    image_path=None
+    image_path= 'default.svg'    
+
     print(request.form)  # This will print the form data in your console for debugging
     
     if 'pfp-select' in request.files:
@@ -91,9 +92,14 @@ def register():
         if image and image.filename != '':
             random_hex = secrets.token_hex(8)
             _, f_ext = os.path.splitext(image.filename)
-            image_path = random_hex + f_ext
+            image_path = random_hex + f_ext 
             image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
             print("image saved")
+        # else:
+        #     image_path= 'default.svg'    
+        #     # image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
+
+
     username = request.form["hidden_username"]
     password = request.form["hidden_password"]
     genres = request.form["hidden_genres"]  # This will return a string like 'hiphop,rb'
@@ -141,14 +147,23 @@ def logout():
 
 
 # Profile info
-@app.route("/profile")
+@app.route("/profile", methods=["GET","POST"])
 def profile():
-    if "username" in session: 
         user = User.query.filter_by(username=session["username"]).first()   
-        image = user.image  
 
-        return render_template("profile.html" ,username=session["username"], user=user, image=image )
-    return redirect(url_for("home"))
+        # image = user.image  
+        if request.method =="POST":
+            new_username = request.form["edit_username"]
+            new_password = request.form["edit_password"]  
+            user.username = new_username
+            user.password = new_password
+
+            db.session.commit()
+            user = User.query.filter_by(username=new_username).first()   
+        
+        return render_template("profile.html" ,username=session["username"], user=user, image=user.image, password=user.password )
+
+        # return redirect(url_for("home"))
 
 if __name__ =="__main__":
     with app.app_context():
