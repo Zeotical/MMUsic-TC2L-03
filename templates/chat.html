@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Music Chat {{ chatroomID }}</title>
+{% block extra_styles %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+{% endblock %}
+{% endblock %}
+
+
+
+{% block style %}
+#song-list {
+    display: none;
+}
+
+#audio_player {
+    display: none;
+}
+
+#show-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+{% endblock %}
+
+{% block body %}
+<div class="container; bg-primary" style="padding-top:10px; padding-bottom:20px">
+    <div class="pg-header;">
+        <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic {{ chatroomID }}</strong></h1>
+    </div>
+</div>
+<div id="chat-window" class="card-body overflow-auto border border-secondary border-1; mx-auto rounded" style="width: 1000px; height: 500px; margin-top: 20px;">
+    <form method="POST">
+        <ul id="messages" class="list-unstyled">
+            {% for message in results %}
+            <li>User: {{ message[0] }}</li>
+            {% endfor %}
+        </ul>
+    </form>
+</div>
+
+<div class="search-box; mx-auto" style="width: 1000px;margin-top: 10px">
+    <div class="form-row justify-content-center  align-items-center">
+        <div class="col-10">
+            <input type="text" name="text" placeholder="Type a song's lyric or title..." style="width: 100%;" id="text" autocomplete="off" class="form-control"/>
+        </div>
+        <div class="col-2">
+            <button type="submit" class="btn btn-default; border border-primary" id="send">Send</button>
+        </div>
+        <div id="result">
+            <div class="col-md-5" style="position:relative; margin-top:0px; margin-left:-25px; width: 1000px">
+                <div class="list-group" id="show-list" style="display:none;">
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ul id="song-list" class="list-group"></ul>
+<audio id="audio_player" controls></audio>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+<script src="{{ url_for('static', filename='songs.js') }}"></script>
+<script src="{{ url_for('static', filename='songs_play.js') }}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+{% endblock %}

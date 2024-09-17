@@ -1,15 +1,26 @@
 #imports
-from flask import Flask,render_template,request,redirect, session, url_for
+from flask import Flask,render_template,request,redirect, session, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import secrets
 import os
+from flask_socketio import SocketIO, emit, join_room
+from flask_mysqldb import MySQL
+
 # from flask_login import LoginManager
 
 app = Flask(__name__)
 app.secret_key="user_authentication11"
 app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = 'chat'
+app.config['MYSQL_UNIX_SOCKET'] = '/opt/lampp/var/mysql/mysql.sock'
 
+mysql = MySQL(app)
+app.config['SECRET_KEY'] = 'chatroom1234'
+socketio = SocketIO(app)
 
 #Configure login_manager
 # login_manager= LoginManager() #creating an incstance of LoginM
@@ -57,7 +68,7 @@ class User_genre(db.Model):
 @app.route("/")
 def home():
     if "username" in session:
-        return redirect(url_for ("dashboard"))
+        return redirect(url_for ("chatroom"))
     else:
      return render_template("index.html")
 
@@ -72,7 +83,7 @@ def login():
     user = User.query.filter_by(username=username).first()
     if user and user.check_password (password):
         session["username"] = username
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("chatroom"))
     else:
         return render_template("index.html")
  return render_template("login.html")  
@@ -130,15 +141,15 @@ def register():
     
 
         session["username"]= username
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("chatroom"))
 # Dashboard
-@app.route("/dashboard")
-def dashboard():
-    if "username" in session:
-     user = User.query.filter_by(username=session["username"]).first()
+# @app.route("/dashboard")
+# def dashboard():
+#     if "username" in session:
+#      user = User.query.filter_by(username=session["username"]).first()
 
-     return render_template("dashboard.html", username= session["username"], user=user)
-    return redirect(url_for("home"))
+#      return render_template("dashboard.html", username= session["username"], user=user)
+#     return redirect(url_for("home"))
 # Logout
 @app.route("/logout")
 def logout():
@@ -192,10 +203,97 @@ def profile():
         return render_template("profile.html" , update=update, user=session["username"])
 
         # return redirect(url_for("home"))
+def add_text(chatroomID, content):
+    try:
+        print(f"Attempting to insert message: '{content}' into chatroom: {chatroomID}")
+        query = "INSERT INTO messages (chatroomID, content) VALUES (%s, %s)" #insert typed messages to database(chat) table(messages) column(content)
+        cur = mysql.connection.cursor()
+        cur.execute(query, (chatroomID, content))
+        mysql.connection.commit()
+        print("Message successfully added.")
+    except Exception as e:
+        print(f"Error saving message to database: {e}")
+    finally:
+        cur.close()
+
+@app.route('/chatroom', methods=['GET', 'POST'])
+def chatroom():
+    
+    cur = mysql.connection.cursor()
+    if request.method == 'POST':
+        selected_genre = request.form.get('genre')
+        cur.execute('SELECT chatroomID FROM chatroom WHERE chatroomID = %s', (selected_genre,))
+        chatroom = cur.fetchone()
+        mysql.connection.commit()
+        cur.close()
+        if chatroom:
+            return redirect(url_for('chatroom', chatroomID=chatroom['chatroomID']))
+    cur.execute('SELECT chatroom_name FROM chatroom')
+    genres = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return render_template('chatroom.html', genres=genres)
+    
+@app.route('/chatroom/<int:chatroomID>', methods=['GET', 'POST'])
+def chat(chatroomID):
+    cur = mysql.connection.cursor()
+    if request.method == 'POST':
+        # Get the content of the new message from the form (assuming the form has an input with name='content')
+        content = request.form.get('content')
+        if content:
+            add_text(chatroomID, content)
+        else:
+            print("No 'content' found in form data")
+    
+    cur.execute("SELECT content FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
+    mysql.connection.commit()
+    results = cur.fetchall()
+    cur.close()
+    return render_template('chat.html', results=results, chatroomID=chatroomID)
+
+
+@socketio.on('joined')
+def handle_joined(data):
+    chatroomID = data['chatroomID']
+    join_room(chatroomID)
+    emit('message', {'username': 'System', 'text': 'Welcome to Chatroom'}, room=chatroomID) #send Welcome to Chatroom to all the connected clients.
+    
+@socketio.on('text')
+def handle_text(data):
+    text = data['text'] #Extracts the message text from the received data
+    chatroomID = data['chatroomID']
+    username = 'User'
+    
+    add_text(chatroomID, text) #Calls add_text() to save the message to the database
+    emit('message', {'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
+    
+@app.route('/livesearch', methods=['POST'])
+def livesearch():
+    search_text = request.form.get('query', '')
+    cursor = mysql.connection.cursor()
+    if search_text:
+        query = """
+        SELECT performer, title, lyric, source FROM songs 
+        WHERE performer LIKE %s OR title LIKE %s OR lyric LIKE %s
+        ORDER BY title ASC LIMIT 10
+        """
+        search_pattern = f"%{search_text}%"
+        cursor.execute(query, (search_pattern, search_pattern, search_pattern))
+        search_results = cursor.fetchall()
+    else:
+        search_results = []
+    cursor.close()
+    return jsonify(search_results)
+
+
+
+
+
 
 if __name__ =="__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    # app.run(debug=True)
+    socketio.run(app, debug=True)
 
 
