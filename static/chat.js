@@ -10,11 +10,13 @@ $(function(){
         $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');
     });
 
-    $('#send').click(function() {
+    $('#send').click(function(event) {
+        event.preventDefault();
         var message = $('#text').val();
-        console.log("Sending message:", message, "to chatroom ID:", chatroomID);
-        socket.emit('text', {text: message, chatroomID: chatroomID}); //Emits a 'text' event to the server with the message
-        $('#text').val('');
+        if (message.trim() !== "") {
+            socket.emit('text', {text: message, chatroomID: chatroomID}); //Emits a 'text' event to the server with the message
+            $('#text').val('');
+        }
     });
 
     $('#text').on('keypress', function(e) {
