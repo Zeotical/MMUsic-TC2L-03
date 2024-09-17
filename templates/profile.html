@@ -18,7 +18,7 @@
  <h1>Username:</h1>
  {{update.username}}
 
- <div class="register">
+ <div class="profile_info">
  <form id="profile_form" action="{{url_for("profile")}}" method="post"  enctype="multipart/form-data">
    <h1>Edit Profile info</h1>
    <input type="text" name="edit_username" placeholder="{{update.username}}" id="profile_username" class="input-field" required autofocus maxlength="25">
@@ -29,7 +29,28 @@
    <input type="file" name="pfp-select"  id="new_file" onchange="preview()">
    <img src="{{ url_for('static', filename='profile_pics/' + update.image) }}" id="new_frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
 
+   <h1>Music Genre Selection</h1>  
 
+   <input type="hidden" name="edit_genre" id="edit_genre">
+
+   <div class="dropdown">
+     <button>Select Music Genres</button>
+     <div class="content">
+       <input type="checkbox" id="mg1"  name="Hiphop" value="Hip hop" onclick="submitGenres()" >    
+       <label for="mg1">Hip Hop</label>   
+       <input type="checkbox" id="mg2"  name="R&B" value="R&B" onclick="submitGenres()" >
+       <label for="mg2">R&B</label>
+       <input type="checkbox" id="mg3"  name="Rock" value="Rock" onclick="submitGenres()" >
+       <label for="mg3">Rock</label>
+       <input type="checkbox" id="mg4"  name="Electronic music" value="Electronic music" onclick="submitGenres()" >
+       <label for="mg4">Electronic music</label>
+       <input type="checkbox" id="mg5"  name="Pop" value="Pop" onclick="submitGenres()" >
+       <label for="mg5">Pop</label>
+       <input type="checkbox" id="mg6"  name="KPOP" value="KPOP" onclick="submitGenres()" >
+       <label for="mg6">KPOP</label>
+     </div>
+   </div>
+   
 
     <input  type="submit"  value="edit" class="btn-register"/>
 
@@ -56,6 +77,31 @@ function see_ps(){
   document.getElementById("new_file").click();
 
  }
+
+ function submitGenres() {
+  var selectedGenres = [];
+  if (document.getElementById("mg1").checked) {
+      selectedGenres.push(document.getElementById("mg1").value);
+  }
+  if (document.getElementById("mg2").checked) {
+      selectedGenres.push(document.getElementById("mg2").value);
+  }
+  if (document.getElementById("mg3").checked) {
+    selectedGenres.push(document.getElementById("mg3").value);
+  }
+  if (document.getElementById("mg4").checked) {
+  selectedGenres.push(document.getElementById("mg4").value);
+  }
+  if (document.getElementById("mg5").checked) {
+  selectedGenres.push(document.getElementById("mg5").value);
+  }
+  if (document.getElementById("mg6").checked) {
+    selectedGenres.push(document.getElementById("mg6").value);
+}
+  
+  // Convert array to comma-separated string
+  document.getElementById("edit_genre").value = selectedGenres.join(',');
+}
 </script>
 
 {% endblock %}
