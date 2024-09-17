@@ -12,6 +12,7 @@ $(function(){
 
     $('#send').click(function(event) {
         event.preventDefault();
+        var chatroomID = "{{ chatroomID }}";
         var message = $('#text').val();
         if (message.trim() !== "") {
             socket.emit('text', {text: message, chatroomID: chatroomID}); //Emits a 'text' event to the server with the message

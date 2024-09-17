@@ -4,125 +4,103 @@
 <title>Chatrooms</title>
 {% endblock %}
 
+{% block style %}
+.chatroom-card{
+    margin: 0 auto; 
+    border: 1px solid #ccc; 
+    border-radius: 10px; 
+    overflow: hidden; 
+    transition: transform 0.2s; 
+    width: 200px; 
+    margin-right: 50px;
+    margin-bottom: 30px;
+}
+
+.chatroom-image{
+    width: 100%; 
+    height: 150px; 
+    object-fit: cover;
+}
+{% endblock %}
+
 {% block body %}
 <div class="container; bg-dark" style="padding-top:10px; padding-bottom:20px">
     <div class="pg-header;">
         <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic</strong></h1>
     </div>
 </div>
-<h2 style="text-align: center; margin-top: 10px">Chatrooms</h2>
+<h2 style="text-align: center; margin-top: 10px; margin-bottom: 10px">Your Chatrooms</h2>
 <div class="container">
     <div class="row">
-        <div class="chatroom-card" style="margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.2s;
-            width: 200px; margin-right: 50px">
+        <div class="chatroom-card">
             <a href="{{ url_for('chat', chatroomID=1) }}">
-                <img src="static/images/hiphop.jpg" alt="Chatroom 1" class="chatroom-image" style="width: 100%;
-            height: 150px;
-            object-fit: cover;">
+                <img src="static/images/hiphop.jpg" alt="Chatroom 1" class="chatroom-image">
                 <div class="p-3">
                     <h5 class="text-center">Hip Hop</h5>
+                    <p>Yo! Join this chatroom to share about Hip Hop with people!!</p>
                 </div>
             </a>
         </div>
-        <div class="chatroom-card" style="margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.2s; width: 200px; margin-right: 50px">
+        <div class="chatroom-card">
             <a href="{{ url_for('chat', chatroomID=2) }}">
-                <img src="static/images/r&b.jpg" alt="Chatroom 2" class="chatroom-image" style="width: 100%;
-            height: 150px;
-            object-fit: cover;">
+                <img src="static/images/r&b.jpg" alt="Chatroom 2" class="chatroom-image">
                 <div class="p-3">
                     <h5 class="text-center">R&B</h5>
+                    <p>You can share your favourite R&B music here!!</p>
                 </div>
             </a>
         </div>
-        <div class="chatroom-card" style="margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.2s; width: 200px; margin-right: 50px">
+        <div class="chatroom-card">
             <a href="{{ url_for('chat', chatroomID=3) }}">
-                <img src="static/images/rock.jpg" alt="Chatroom 3" class="chatroom-image" style="width: 100%;
-            height: 150px;
-            object-fit: cover;">
+                <img src="static/images/rock.jpg" alt="Chatroom 3" class="chatroom-image">
                 <div class="p-3">
                     <h5 class="text-center">Rock</h5>
+                    <p>We will, we will rock you!!</p>
                 </div>
             </a>
         </div>
-        <div class="chatroom-card" style="margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.2s; width: 200px; margin-right: 50px">
+        <div class="chatroom-card">
             <a href="{{ url_for('chat', chatroomID=4) }}">
-                <img src="static/images/electronic music.jpg" alt="Chatroom 4" class="chatroom-image" style="width: 100%;
-            height: 150px;
-            object-fit: cover;">
+                <img src="static/images/electronic music.jpg" alt="Chatroom 4" class="chatroom-image">
                 <div class="p-3">
                     <h5 class="text-center">Electronic Music</h5>
+                    <p>Woah, electronic music is cool</p>
                 </div>
             </a>
         </div>
-        <div class="chatroom-card" style="margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.2s; width: 200px; margin-right: 50px">
+        <div class="chatroom-card">
             <a href="{{ url_for('chat', chatroomID=5) }}">
-                <img src="static/images/pop music.jpeg" alt="Chatroom 5" class="chatroom-image" style="width: 100%;
-            height: 150px;
-            object-fit: cover;">
+                <img src="static/images/pop music.jpeg" alt="Chatroom 5" class="chatroom-image">
                 <div class="p-3">
                     <h5 class="text-center">Pop</h5>
+                    <p>Share your favourite lyrics/songs here!!</p>
                 </div>
             </a>
         </div>
-        <div class="chatroom-card" style="margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.2s; width: 200px; margin-right: 50px">
+        <div class="chatroom-card">
             <a href="{{ url_for('chat', chatroomID=6) }}">
-                <img src="static/images/kpop.jpg" alt="Chatroom 6" class="chatroom-image" style="width: 100%;
-            height: 150px;
-            object-fit: cover;">
+                <img src="static/images/kpop.jpg" alt="Chatroom 6" class="chatroom-image">
                 <div class="p-3">
                     <h5 class="text-center">KPOP</h5>
+                    <p>Annyeonghaseyo, yeorobun</p>
                 </div>
             </a>
         </div>
-        <div class="chatroom-card" style="margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.2s; width: 200px; margin-right: 50px">
+        <div class="chatroom-card">
             <a href="{{ url_for('chat', chatroomID=7) }}">
-                <img src="static/images/studyroom.jpg" alt="Chatroom 7" class="chatroom-image" style="width: 100%;
-            height: 150px;
-            object-fit: cover;">
+                <img src="static/images/studyroom.jpg" alt="Chatroom 7" class="chatroom-image">
                 <div class="p-3">
                     <h5 class="text-center">Study Room</h5>
+                    <p>shhhh...</p>
                 </div>
             </a>
         </div>
-        <div class="chatroom-card" style="margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.2s; width: 200px; margin-right: 50px">
+        <div class="chatroom-card">
             <a href="{{ url_for('chat', chatroomID=8) }}">
-                <img src="static/images/coding.jpg" alt="Chatroom 8" class="chatroom-image" style="width: 100%;
-            height: 150px;
-            object-fit: cover;">
+                <img src="static/images/coding.jpg" alt="Chatroom 8" class="chatroom-image">
                 <div class="p-3">
                     <h5 class="text-center">Coding Space</h5>
+                    <p>Hello, world</p>
                 </div>
             </a>
         </div>
