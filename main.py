@@ -157,8 +157,7 @@ def profile():
         if request.method =="POST":
             update.username = request.form["edit_username"]
             update.password = request.form["edit_password"] 
-            genres = request.form["edit_genre_selection"]
-            genre_list = genres.split(',')  if genres else []  
+            
 
             # Update pfp
             if request.files["pfp-select"]:
@@ -173,13 +172,15 @@ def profile():
                     print("image saved")
             #Update genre selection
             User_genre.query.filter_by(user_id=update.id).delete()
+            if request.form.get("edit_genre"):
+                genres = request.form.get("edit_genre")
+                genre_list = genres.split(',') 
+                for genre_name in genre_list:
+                    genre = Music_genres.query.filter_by(music_genres=genre_name).first()
 
-            for genre_name in genre_list:
-                genre = Music_genres.query.filter_by(music_genres=genre_name).first()
-
-                if genre:
-                    music = User_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
-                    db.session.add(music)
+                    if genre:
+                        music = User_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
+                        db.session.add(music)
     
 
             session["username"] = update.username
