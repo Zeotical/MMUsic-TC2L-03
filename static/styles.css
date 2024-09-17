@@ -145,7 +145,7 @@ form button {
     transition: 1s;
 }
 
-#frame{
+#frame , #new_frame{
     display: block;   
     margin: 0 auto; 
     border-radius: 50%;
@@ -155,7 +155,7 @@ form button {
 }
 
 
-#file{
+#file, #new_file{
     display: none;
 }
 
