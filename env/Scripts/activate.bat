@@ -8,11 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-<<<<<<< HEAD
-set VIRTUAL_ENV=C:\Users\ASUS\Documents\exercise\env
-=======
 set VIRTUAL_ENV=C:\Users\jasmi\MMUsic-TC2L-03\env
->>>>>>> 1cd071e4fe285c96c7c59c9805806ebf81662ee2
 
 if not defined PROMPT set PROMPT=$P$G
 
