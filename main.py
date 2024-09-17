@@ -88,7 +88,8 @@ def register():
     
     if 'pfp-select' in request.files:
         image = request.files['pfp-select']
-        # Save the image using save_picture function
+
+        # Save the image 
         if image and image.filename != '':
             random_hex = secrets.token_hex(8)
             _, f_ext = os.path.splitext(image.filename)
@@ -102,9 +103,9 @@ def register():
 
     username = request.form["hidden_username"]
     password = request.form["hidden_password"]
-    genres = request.form["hidden_genres"]  # This will return a string like 'hiphop,rb'
+    genres = request.form["hidden_genres"]  # Returns a string like 'hiphop,rb'
     
-    genre_list = genres.split(',')  # Convert the string to a list
+    genre_list = genres.split(',')  # Converts the string to a list
 
     user = User.query.filter_by(username=username).first()
    
@@ -149,19 +150,33 @@ def logout():
 # Profile info
 @app.route("/profile", methods=["GET","POST"])
 def profile():
+        # form = profile_form()
         user = User.query.filter_by(username=session["username"]).first()   
-
+        id = user.id
+        update= User.query.get_or_404(id)
         # image = user.image  
         if request.method =="POST":
-            new_username = request.form["edit_username"]
-            new_password = request.form["edit_password"]  
-            user.username = new_username
-            user.password = new_password
+            update.username = request.form["edit_username"]
+            update.password = request.form["edit_password"] 
 
+            # Update pfp
+            if request.files["pfp-select"]:
+                image = request.files["pfp-select"]
+                
+                if image and image.filename != '':
+                    random_hex = secrets.token_hex(8)
+                    _, f_ext = os.path.splitext(image.filename)
+                    image_path = random_hex + f_ext 
+                    image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
+                    update.image = image_path
+                    print("image saved")
+            session["username"] = update.username
+         
             db.session.commit()
-            user = User.query.filter_by(username=new_username).first()   
+
+    
         
-        return render_template("profile.html" ,username=session["username"], user=user, image=user.image, password=user.password )
+        return render_template("profile.html" , update=update, user=session["username"])
 
         # return redirect(url_for("home"))
 
