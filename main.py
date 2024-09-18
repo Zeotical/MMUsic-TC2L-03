@@ -122,6 +122,8 @@ def register():
    
     if user:
         return render_template("index.html", error="User already here!")
+    elif username=="" or password=="":
+        return render_template("index.html", error="User already here!")
     else:
         new_user = User(username=username, image=image_path, password=password)
         new_user.set_password(password)
