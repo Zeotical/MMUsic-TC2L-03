@@ -22,13 +22,6 @@ mysql = MySQL(app)
 app.config['SECRET_KEY'] = 'chatroom1234'
 socketio = SocketIO(app)
 
-#Configure login_manager
-# login_manager= LoginManager() #creating an incstance of LoginM
-# login_manager.init_app(app)
-# @login_manager.user_loader 
-# def load_user(user_id):
-#     return User.get(user_id)
-
 # Configure SQL Alchmey
 app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/registerdb?unix_socket=/opt/lampp/var/mysql/mysql.sock"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
