@@ -7,8 +7,14 @@
     
 
 <h1> THIS IS YOUR PROFILE PAGE{{update.username}}</h1>
- <h1> THIS IS YOUR PROFILE PAGE </h1>
+{{display_genres}}
+<ul>
+  {% for genre in genre_names %}
+  <li>{{ genre }}</li>
+  {% endfor %}
+</ul>
 
+{{music}}
  <h1> Profile Image:</h1>
  {% if update.image %}
     <img src="{{ url_for('static', filename='profile_pics/' + update.image)  }}"   alt="Profile Picture"style="width: 100px; height:100px";/>
