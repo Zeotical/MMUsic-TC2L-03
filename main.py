@@ -36,6 +36,8 @@ class User(db.Model):
     password = db.Column(db.String(15), unique=True, nullable=False)
     password_hash = db.Column(db.String(1512), nullable=False)
     image = db.Column(db.String(2000) , nullable=False, default='default.svg')
+    bio = db.Column(db.String(150), nullable=True)
+
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -163,6 +165,7 @@ def profile():
         if request.method =="POST":
             update.username = request.form["edit_username"]
             update.password = request.form["edit_password"] 
+            update.bio = request.form["edit_bio"]
             
 
             # Update pfp
@@ -279,7 +282,6 @@ def livesearch():
         search_results = []
     cursor.close()
     return jsonify(search_results)
-
 
 
 

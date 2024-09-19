@@ -24,6 +24,9 @@
  <h1>Username:</h1>
  {{update.username}}
 
+ <h1>BIO</h1>
+ {{update.bio}}
+
  <div class="profile_info">
  <form id="profile_form" action="{{url_for("profile")}}" method="post"  enctype="multipart/form-data">
    <h1>Edit Profile info</h1>
@@ -56,6 +59,8 @@
        <label for="mg6">KPOP</label>
      </div>
    </div>
+   <h1>Bio</h1>
+   <input type="text" class="input-field" maxlength="150" name="edit_bio" id="profile_bio" placeholder="{{update.bio}}">
    
 
     <input  type="submit"  value="edit" class="btn-register"/>
