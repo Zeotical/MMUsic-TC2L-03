@@ -36,12 +36,14 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.link-class', function() {
+    
+
         var selectedFile = $(this).data('file');
         var filePath = '/static/music.mp3/' + selectedFile;
         console.log("Selected file path: ", filePath);
         $('#audio_player').attr('src', filePath);
         var lyrics = $(this).find('small').text();
-        $('#messages').append(`<li>User: ${lyrics}</li>`);
+        $('#messages').append(`<li> ${username}: ${lyrics}</li>`);
         $('#show-list').hide();
         var audioPlayer = document.getElementById('audio_player');
         audioPlayer.play().then(() => {
