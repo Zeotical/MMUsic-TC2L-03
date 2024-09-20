@@ -168,6 +168,7 @@ def profile():
             update.username = request.form["edit_username"]
             update.password = request.form["edit_password"] 
             update.bio = request.form["edit_bio"]
+            session["bio"] = update.bio
             
 
             # Update pfp
@@ -183,7 +184,7 @@ def profile():
                     session["pfp_path"] = image_path
                     print("image saved")
             #Update genre selection
-            # User_genre.query.filter_by(user_id=update.id).delete()
+            User_genre.query.filter_by(user_id=update.id).delete()
             if request.form.get("edit_genre"):
                 genres = request.form.get("edit_genre")
                 genre_list = genres.split(',') 
