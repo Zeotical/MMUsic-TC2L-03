@@ -89,6 +89,7 @@ def login():
 @app.route("/register", methods=["POST"])
 def register():
     image_path= 'default.svg'    
+    session["pfp_path"] = image_path
 
     print(request.form)  # This will print the form data in your console for debugging
     
@@ -104,9 +105,11 @@ def register():
             session["pfp_path"] = image_path
 
             print("image saved")
-        # else:
-        #     image_path= 'default.svg'    
-        #     # image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
+    else:
+            image_path= 'default.svg'    
+            image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
+            session["pfp_path"] = image_path
+
 
 
     username = request.form["hidden_username"]
