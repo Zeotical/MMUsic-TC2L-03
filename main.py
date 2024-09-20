@@ -101,6 +101,8 @@ def register():
             _, f_ext = os.path.splitext(image.filename)
             image_path = random_hex + f_ext 
             image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
+            session["pfp_path"] = image_path
+
             print("image saved")
         # else:
         #     image_path= 'default.svg'    
@@ -178,9 +180,10 @@ def profile():
                     image_path = random_hex + f_ext 
                     image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
                     update.image = image_path
+                    session["pfp_path"] = image_path
                     print("image saved")
             #Update genre selection
-            User_genre.query.filter_by(user_id=update.id).delete()
+            # User_genre.query.filter_by(user_id=update.id).delete()
             if request.form.get("edit_genre"):
                 genres = request.form.get("edit_genre")
                 genre_list = genres.split(',') 

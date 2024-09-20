@@ -43,7 +43,7 @@ $(document).ready(function() {
         console.log("Selected file path: ", filePath);
         $('#audio_player').attr('src', filePath);
         var lyrics = $(this).find('small').text();
-        $('#messages').append(`<li> ${username}: ${lyrics}</li>`);
+        $('#messages').append(`<li> <img src="${pfp_url}" class="chatpfp"> ${username}: ${lyrics}</li>`);
         $('#show-list').hide();
         var audioPlayer = document.getElementById('audio_player');
         audioPlayer.play().then(() => {
