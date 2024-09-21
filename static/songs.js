@@ -35,15 +35,15 @@ $(document).ready(function() {
         }
     });
 
+
     $(document).on('click', '.link-class', function() {
     
-
         var selectedFile = $(this).data('file');
         var filePath = '/static/music.mp3/' + selectedFile;
         console.log("Selected file path: ", filePath);
         $('#audio_player').attr('src', filePath);
         var lyrics = $(this).find('small').text();
-        $('#messages').append(`<li> <img src="${pfp_url}" class="chatpfp" onclick="info_popup"> ${username}: ${lyrics}</li>`);
+        $('#messages').append(`<li> <img src="${pfp_url}" class="chatpfp"> <span class="open">${username}</span>: ${lyrics}</li>`);
         $('#show-list').hide();
         var audioPlayer = document.getElementById('audio_player');
         audioPlayer.play().then(() => {
@@ -53,3 +53,13 @@ $(document).ready(function() {
         });
     });
 });
+
+
+$(document).on('click', '.open', function() {
+    $('#modal_container').addClass('show');
+});
+
+$('#close').click(function() {
+    $('#modal_container').removeClass('show');
+});
+
