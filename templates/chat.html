@@ -62,7 +62,7 @@
         opacity: 1;
     }
     
-#open{
+.open{
         
         background-color:#ff105f;
         border: 0;
@@ -70,6 +70,8 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         color:#fff;
         padding: 10px 25px;
+        cursor: pointer;
+
     }
     
 #modal{
@@ -126,9 +128,9 @@
 <audio id="audio_player" controls></audio>
 
 <div id="modal-body">
-<button id="open">
+<!-- <button id="open">
     click me
-</button>
+</button> -->
  <div id="modal_container">
      <div id="modal">
        <h1>Username: {{session["username"]}} </h1> 
@@ -149,8 +151,7 @@
 </script>
 
 <script>
-    function info_popup () {
-    var open = document.getElementById("open");
+    <!-- const open = document.getElementById("open");
     const modal_container = document.getElementById("modal_container");
     const close = document.getElementById("close");
 
@@ -160,7 +161,7 @@ modal_container.classList.add('show');
 
     close.addEventListener('click', ()=> {
         modal_container.classList.remove('show');
-    })}
+    }) -->
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
