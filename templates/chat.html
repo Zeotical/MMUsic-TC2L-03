@@ -2,7 +2,13 @@
 
 {% block head %}
 <title>Music Chat {{ chatroomID }}</title>
+{% block extra_styles %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 {% endblock %}
+{% endblock %}
+
+
 
 {% block style %}
 #song-list {
@@ -17,6 +23,13 @@
     max-height: 400px;
     overflow-y: auto;
 }
+
+.chatpfp {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%; 
+}
+
 {% endblock %}
 
 {% block body %}
@@ -56,7 +69,11 @@
 <ul id="song-list" class="list-group"></ul>
 <audio id="audio_player" controls></audio>
 
+<script>
+    const username = "{{ session['username'] }}"; 
+    const pfp_url = "{{url_for('static', filename='profile_pics/' + session['pfp_path'])}}";
 
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <script src="{{ url_for('static', filename='chat.js') }}"></script>

@@ -2,7 +2,12 @@
 
 {% block head %}
 <title>Chatrooms</title>
+{% block extra_styles %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 {% endblock %}
+
+{% endblock %}
+
 
 {% block style %}
 .chatroom-card{
@@ -30,6 +35,9 @@
     </div>
 </div>
 <h2 style="text-align: center; margin-top: 10px; margin-bottom: 10px">Your Chatrooms</h2>
+<a href="{{url_for("logout" )}}" class="btn btn-logout">Logout</a>
+<a href="{{ url_for("profile" )}}"">Profile</a>
+
 <div class="container">
     <div class="row">
         <div class="chatroom-card">
