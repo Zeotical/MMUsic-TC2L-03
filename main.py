@@ -104,9 +104,6 @@ def register():
             session["pfp_path"] = image_path
 
             print("image saved")
-   
-
-
 
     username = request.form["hidden_username"]
     password = request.form["hidden_password"]
@@ -131,14 +128,13 @@ def register():
             if genre:
                 music = User_genre(genre_name=genre_name, user_id=new_user.id, genre_id=genre.id)
                 db.session.add(music)
-                db.session.commit()
 
         
         db.session.commit()
         
-    
-
         session["username"]= username
+        session["genre_selected"]= genre_list
+
         return redirect(url_for("chatroom"))
 # Dashboard
 # @app.route("/dashboard")
@@ -183,25 +179,30 @@ def profile():
                     session["pfp_path"] = image_path
                     print("image saved")
             #Update genre selection
-            User_genre.query.filter_by(user_id=update.id).delete()
             if request.form.get("edit_genre"):
-                genres = request.form.get("edit_genre")
-                genre_list = genres.split(',') 
+                update.genres = request.form.get("edit_genre")
+                genre_list = update.genres.split(',') 
+         
+                  
+                User_genre.query.filter_by(user_id=update.id).delete()
                 for genre_name in genre_list:
                     genre = Music_genres.query.filter_by(music_genres=genre_name).first()
-
                     if genre:
                         music = User_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
                         db.session.add(music)
-    
+
+                session["genre_selected"] = genre_list
+                update.genres=session["genre_selected"]
+            
+            else:
+                update.genres=session["genre_selected"]
+
 
             session["username"] = update.username
-         
             db.session.commit()
+        update.genres=session["genre_selected"]
 
-    
-        
-        return render_template("profile.html" , update=update, user=session["username"])
+        return render_template("profile.html" , update=update, user=session["username"]) 
 
         # return redirect(url_for("home"))
 def add_text(chatroomID, content):

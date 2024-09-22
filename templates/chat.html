@@ -131,14 +131,12 @@
 <audio id="audio_player" controls></audio>
 
 <div id="modal-body">
-<!-- <button id="open">
-    click me
-</button> -->
+
  <div id="modal_container">
      <div id="modal">
        <h1>Username: {{session["username"]}} </h1> 
        <img src="{{url_for('static', filename='profile_pics/' + session['pfp_path'])}}" class="chatpfp" />
-       <h1>Music genres:</h1>
+       <h1>Music genres:{{session['genre_selected']}}</h1>
        <h1>Bio: {{session["bio"]}}</h1>
        <button id="close">
         close me
@@ -153,21 +151,9 @@
 
 </script>
 
-<script>
-    <!-- const open = document.getElementById("open");
-    const modal_container = document.getElementById("modal_container");
-    const close = document.getElementById("close");
 
-    open.addEventListener('click', ()=> {
-modal_container.classList.add('show');
-    });
 
-    close.addEventListener('click', ()=> {
-        modal_container.classList.remove('show');
-    }) -->
-</script>
 
-</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <script src="{{ url_for('static', filename='chat.js') }}"></script>
