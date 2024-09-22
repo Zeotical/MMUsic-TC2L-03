@@ -18,19 +18,29 @@ def validate_chatroomID(chatroomID):
         cur = mysql.connection.cursor()
         cur.execute("SELECT chatroomID FROM chatroom WHERE chatroomID = %s", (chatroomID,))
         result = cur.fetchone()
+        print(f"Query result: {result}")
+        mysql.connection.commit()
         cur.close()
-        return result is not None
+        if result:  # Check if a result was returned
+            return True  # Chatroom exists
+        else:
+            return False
     except Exception as e:
         print(f"Database error: {e}")
         return False
 
 def save_message(content, chatroomID, user_id):
     if validate_chatroomID(chatroomID):
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", (content, chatroomID, user_id))
-        mysql.connection.commit()
-        cur.close()
-        return True
+        try:
+            cur = mysql.connection.cursor()
+            print(f"Inserting message: {content}, ChatroomID: {chatroomID}, UserID: {user_id}")
+            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", (content, chatroomID, user_id))
+            mysql.connection.commit()
+            cur.close()
+            return True
+        except Exception as e:
+            print(f"Database error while saving message: {e}")
+            return False
     else:
         print(f"Error: ChatroomID {chatroomID} does not exist")
         return False
