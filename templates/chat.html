@@ -17,6 +17,26 @@
     overflow-y: auto; /* Allow vertical scrolling for messages */
 }
 
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
 #song-list {
     display: none;
 }
@@ -28,6 +48,7 @@
         <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic {{ chatroomID }}</strong></h1>
     </div>
 </div>
+
 <div id="chat-window" class="card-body overflow-auto; mx-auto rounded">
     <form method="POST">
         <ul id="messages" class="list-unstyled">
@@ -67,12 +88,12 @@
 <div class="chatroom-switch">
     <label for="chatroom-select">Switch Chatroom:</label>
     <select id="chatroom-select" onchange="changeChatroom()">
-        <option value="{{ url_for('chat', chatroomID=1) }}">Hip Hop</option>
-        <option value="{{ url_for('chat', chatroomID=2) }}">R&B</option>
-        <option value="{{ url_for('chat', chatroomID=3) }}">Rock</option>
-        <option value="{{ url_for('chat', chatroomID=4) }}">Electronic music</option>
-        <option value="{{ url_for('chat', chatroomID=5) }}">Pop</option>
-        <option value="{{ url_for('chat', chatroomID=6) }}">KPOP</option>
+        <option value="{{ url_for('chat', chatroomID=1) }}">Power Up</option>
+        <option value="{{ url_for('chat', chatroomID=2) }}">Tears Collections</option>
+        <option value="{{ url_for('chat', chatroomID=3) }}">Lovers</option>
+        <option value="{{ url_for('chat', chatroomID=4) }}">Party O'Clock</option>
+        <option value="{{ url_for('chat', chatroomID=5) }}">Sweat Squad</option>
+        <option value="{{ url_for('chat', chatroomID=6) }}">Chillax</option>
         <option value="{{ url_for('chat', chatroomID=7) }}">Study Room</option>
         <option value="{{ url_for('chat', chatroomID=8) }}">Coding Space</option>
     </select>
@@ -87,9 +108,9 @@
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script>
     function changeChatroom() {
-        var select = document.getElementById("chatroom-select");
-        var selectedChatroom = select.options[select.selectedIndex].value;
-        window.location.href = selectedChatroom;
+        var select = document.getElementById("chatroom-select"); // 1. Retrieve the dropdown menu element by its ID
+        var selectedChatroom = select.options[select.selectedIndex].value; // 2. Get the value of the currently selected option in the dropdown menu
+        window.location.href = selectedChatroom; // 3. Redirect the user to the URL of the selected chatroom
     }
 </script>
 {% endblock %}
