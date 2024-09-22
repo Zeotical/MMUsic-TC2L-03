@@ -35,7 +35,7 @@ class User(db.Model):
     username = db.Column(db.String(25), unique=True, nullable=False)
     password = db.Column(db.String(15), unique=True, nullable=False)
     password_hash = db.Column(db.String(1512), nullable=False)
-    image = db.Column(db.String(2000) , nullable=False, default='default.svg')
+    image = db.Column(db.String(2000) , nullable=True, default='default.svg')
     bio = db.Column(db.String(150), nullable=True)
 
 
@@ -88,10 +88,9 @@ def login():
 # Register
 @app.route("/register", methods=["POST"])
 def register():
+    #In case user doesn't add a defaut image.
     image_path= 'default.svg'    
     session["pfp_path"] = image_path
-
-    print(request.form)  # This will print the form data in your console for debugging
     
     if 'pfp-select' in request.files:
         image = request.files['pfp-select']
@@ -105,10 +104,7 @@ def register():
             session["pfp_path"] = image_path
 
             print("image saved")
-    else:
-            image_path= 'default.svg'    
-            image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
-            session["pfp_path"] = image_path
+   
 
 
 
@@ -123,7 +119,7 @@ def register():
     if user:
         return render_template("index.html", error="User already here!")
     elif username=="" or password=="":
-        return render_template("index.html", error="User already here!")
+        return render_template("index.html", error="Empty ps and username!")
     else:
         new_user = User(username=username, image=image_path, password=password)
         new_user.set_password(password)
