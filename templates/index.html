@@ -51,7 +51,7 @@
 
 
     <input type="file" name="pfp-select"  id="file" onchange="preview()">
-    <img  id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
+    <img  src="{{ url_for('static', filename='profile_pics/default.svg')}}" id="frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
     
     <div class="btn-box">
       <button type="button" id="back2">Back</button>

@@ -151,8 +151,8 @@ form button {
     border-radius: 50%;
     border: none;
     outline: none;
-    background-color: #ff105f;
     background-image: url('/static/profile_pics/default.svg'); 
+    background-size: cover;
 }
 
 
