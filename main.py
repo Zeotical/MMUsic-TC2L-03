@@ -25,6 +25,50 @@ mysql = MySQL(app)
 app.config['SECRET_KEY'] = 'chatroom1234'
 socketio = SocketIO(app)
 
+def validate_chatroomID(chatroomID):
+    try: 
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT chatroomID FROM chatroom WHERE chatroomID = %s", (chatroomID,))
+        result = cur.fetchone()
+        print(f"Query result: {result}")
+        mysql.connection.commit()
+        cur.close()
+        if result:  # Check if a result was returned
+            return True  # Chatroom exists
+        else:
+            return False
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
+
+def save_message(content, chatroomID, user_id):
+    if validate_chatroomID(chatroomID):
+        try:
+            cur = mysql.connection.cursor()
+            print(f"Inserting message: {content}, ChatroomID: {chatroomID}, UserID: {user_id}")
+            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", (content, chatroomID, user_id))
+            mysql.connection.commit()
+            cur.close()
+            return True
+        except Exception as e:
+            print(f"Database error while saving message: {e}")
+            return False
+    else:
+        print(f"Error: ChatroomID {chatroomID} does not exist")
+        return False
+
+def get_messages(chatroomID):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
+        messages = cur.fetchall()
+        mysql.connection.commit()
+        cur.close()
+        return messages
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
+
 # Configure SQL Alchmey
 app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/registerdb?unix_socket=/opt/lampp/var/mysql/mysql.sock"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
@@ -213,18 +257,7 @@ def profile():
            
         
         # return redirect(url_for("home"))
-def add_text(chatroomID, content):
-    try:
-        print(f"Attempting to insert message: '{content}' into chatroom: {chatroomID}")
-        query = "INSERT INTO messages (chatroomID, content) VALUES (%s, %s)" #insert typed messages to database(chat) table(messages) column(content)
-        cur = mysql.connection.cursor()
-        cur.execute(query, (chatroomID, content))
-        mysql.connection.commit()
-        print("Message successfully added.")
-    except Exception as e:
-        print(f"Error saving message to database: {e}")
-    finally:
-        cur.close()
+
 
 @app.route('/chatroom', methods=['GET', 'POST'])
 def chatroom():
@@ -246,20 +279,28 @@ def chatroom():
     
 @app.route('/chatroom/<int:chatroomID>', methods=['GET', 'POST'])
 def chat(chatroomID):
-    cur = mysql.connection.cursor()
+    if 'user_id' not in session:
+        session['user_id'] = secrets.token_hex(16)
+
+    user_id = session['user_id']
     if request.method == 'POST':
         # Get the content of the new message from the form (assuming the form has an input with name='content')
         content = request.form.get('content')
         if content:
-            add_text(chatroomID, content)
-        else:
-            print("No 'content' found in form data")
+            if save_message(content, chatroomID, user_id):
+                return jsonify({"status": "success"})
+            else:
+                return jsonify({"status": "error", "message": "Failed to save message"}), 400
     
-    cur.execute("SELECT content FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT background_url FROM chatroom WHERE chatroomID = %s", (chatroomID,))
+    background_url = cur.fetchone()[0]  # Fetch the background URL
+    print(f"Background URL: {background_url}")
     mysql.connection.commit()
-    results = cur.fetchall()
     cur.close()
-    return render_template('chat.html', results=results, chatroomID=chatroomID)
+    
+    messages = get_messages(chatroomID)
+    return render_template('chat.html', messages=messages, chatroomID=chatroomID, user_id=user_id, background_url=background_url)
 
 
 @socketio.on('joined')
@@ -272,10 +313,10 @@ def handle_joined(data):
 def handle_text(data):
     text = data['text'] #Extracts the message text from the received data
     chatroomID = data['chatroomID']
-    username = session['username']
+    user_id = "User"
     
-    add_text(chatroomID, text) #Calls add_text() to save the message to the database
-    emit('message', {'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
+    save_message(text, chatroomID, user_id) #Calls add_text() to save the message to the database
+    emit('message', {'username': user_id, 'text': text}, room=chatroomID) #Emits the message to all connected clients
     
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
