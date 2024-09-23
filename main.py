@@ -209,7 +209,7 @@ def profile():
     if request.method == "POST":
     
         update_username = request.form["edit_username"]
-        username_taken = User.query.filter_by(username=update.username).first()  
+        username_taken = User.query.filter_by(username=update_username).first()  
 
         
         update.password= request.form["edit_password"] 
@@ -253,10 +253,6 @@ def profile():
         db.session.commit()
 
     return render_template("profile.html", update=update, user=session["username"])
-        
-           
-        
-        # return redirect(url_for("home"))
 
 
 @app.route('/chatroom', methods=['GET', 'POST'])
