@@ -2,7 +2,12 @@
 
 {% block head %}
 <title>Music Chat {{ chatroomID }}</title>
+{% block extra_styles %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 {% endblock %}
+{% endblock %}
+
 
 {% block style %}
 #chat-window {
@@ -40,6 +45,83 @@ select {
 #song-list {
     display: none;
 }
+
+#audio_player {
+    display: none;
+}
+
+#show-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.chatpfp {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%; 
+}
+
+#modal-body {
+    box-sizing: border-box;
+
+    background-color: #edeef6;    
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    margin: 0;
+    }
+    
+#modal_container{
+        display: flex;
+        align-items: center;
+        justify-content: center;    
+        background-color: rgba(0, 0, 0, 0.3);
+        position: fixed;
+        opacity: 0;
+        pointer-events: none;
+        top:0;
+        left:0;
+        height:100vh;
+        width: 100vw;
+        transition: opacity 0.3s ease; }
+    
+    
+#modal_container.show {
+        pointer-events: auto;
+        opacity: 1;
+    }
+    
+.open{
+        
+        background-color:#ff105f;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        color:#fff;
+        padding: 10px 25px;
+        cursor: pointer;
+        margin-top: 15px;
+        display: inline-block;
+        
+
+    }
+    
+#modal{
+       background-color: #fff; 
+       border-radius: 5px;
+       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+       padding: 30px 50px;
+       width:600px;
+       max-width: 100%;
+       text-align: center;
+    }
+    
+#modal h1 {
+        margin:0;
+    }
+
 {% endblock %}
 
 {% block body %}
@@ -48,6 +130,36 @@ select {
         <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic {{ chatroomID }}</strong></h1>
     </div>
 </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">MMUsic</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown active">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="navbarDropdownMenuLink" aria-haspopup="true" aria-expanded="false">Switch Chatroom</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="#" onclick="changeChatroom('{{ url_for('chat', chatroomID=1) }}')">Power Up</a>
+                    <a class="dropdown-item" href="#" onclick="changeChatroom('{{ url_for('chat', chatroomID=2) }}')">Tears Collections</a>
+                    <a class="dropdown-item" href="#" onclick="changeChatroom('{{ url_for('chat', chatroomID=3) }}')">Lovers</a>
+                    <a class="dropdown-item" href="#" onclick="changeChatroom('{{ url_for('chat', chatroomID=4) }}')">Party O'Clock</a>
+                    <a class="dropdown-item" href="#" onclick="changeChatroom('{{ url_for('chat', chatroomID=5) }}')">Sweat Squad</a>
+                    <a class="dropdown-item" href="#" onclick="changeChatroom('{{ url_for('chat', chatroomID=6) }}')">Chillax</a>
+                    <a class="dropdown-item" href="#" onclick="changeChatroom('{{ url_for('chat', chatroomID=7) }}')">Study Room</a>
+                    <a class="dropdown-item" href="#" onclick="changeChatroom('{{ url_for('chat', chatroomID=8) }}')">Coding Space</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="http://127.0.0.1:5000/chats">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="http://127.0.0.1:5000/profile">Profile</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
 
 <div id="chat-window" class="card-body overflow-auto; mx-auto rounded">
     <form method="POST">
@@ -64,17 +176,11 @@ select {
         <div class="col-9">
             <input type="text" name="text" placeholder="Type a song's lyric or title..." style="width: 100%;" id="text" autocomplete="off" class="form-control"/>
         </div>
-        <div class="col-1 text-center">
-            <audio id="audio_player" controls hidden></audio>
-            <div id="playandpause" class="play-button">
-                <ion-icon name="play-circle-outline" style="font-size: 48px; cursor: pointer;"></ion-icon>
-            </div>
-        </div>
         <div class="col-2">
             <button type="submit" class="btn btn-default; border border-primary" id="send">Send</button>
         </div>
         <div id="result">
-            <div class="col-md-5" style="position:relative; margin-top:-125px; margin-left:-25px; width: 1000px">
+            <div class="col-md-5" style="position:relative; margin-top:0px; margin-left:-25px; width: 1000px">
                 <div class="list-group" id="show-list" style="display:none;">
                    
                 </div>
@@ -84,20 +190,28 @@ select {
 </div>
 
 <ul id="song-list" class="list-group"></ul>
+<audio id="audio_player" controls></audio>
 
-<div class="chatroom-switch">
-    <label for="chatroom-select">Switch Chatroom:</label>
-    <select id="chatroom-select" onchange="changeChatroom()">
-        <option value="{{ url_for('chat', chatroomID=1) }}">Power Up</option>
-        <option value="{{ url_for('chat', chatroomID=2) }}">Tears Collections</option>
-        <option value="{{ url_for('chat', chatroomID=3) }}">Lovers</option>
-        <option value="{{ url_for('chat', chatroomID=4) }}">Party O'Clock</option>
-        <option value="{{ url_for('chat', chatroomID=5) }}">Sweat Squad</option>
-        <option value="{{ url_for('chat', chatroomID=6) }}">Chillax</option>
-        <option value="{{ url_for('chat', chatroomID=7) }}">Study Room</option>
-        <option value="{{ url_for('chat', chatroomID=8) }}">Coding Space</option>
-    </select>
+<div id="modal-body">
+
+ <div id="modal_container">
+     <div id="modal">
+       <h1>Username: {{session["username"]}} </h1> 
+       <img src="{{url_for('static', filename='profile_pics/' + session['pfp_path'])}}" class="chatpfp" />
+       <h1>Music genres:{{session['genre_selected']}}</h1>
+       <h1>Bio: {{session["bio"]}}</h1>
+       <button id="close">
+        close me
+       </button>
+      </div>
+ </div>
 </div>
+
+<script>
+    const username = "{{ session['username'] }}"; 
+    const pfp_url = "{{url_for('static', filename='profile_pics/' + session['pfp_path'])}}";
+
+</script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
@@ -106,11 +220,13 @@ select {
 <script src="{{ url_for('static', filename='songs_play.js') }}"></script>
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
-    function changeChatroom() {
-        var select = document.getElementById("chatroom-select"); // 1. Retrieve the dropdown menu element by its ID
-        var selectedChatroom = select.options[select.selectedIndex].value; // 2. Get the value of the currently selected option in the dropdown menu
-        window.location.href = selectedChatroom; // 3. Redirect the user to the URL of the selected chatroom
+    // Function to handle the redirection when a chatroom is selected from the dropdown
+    function changeChatroom(selectedChatroom) {
+        window.location.href = selectedChatroom;  // Redirect the user to the selected chatroom URL
     }
 </script>
 {% endblock %}
