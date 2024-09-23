@@ -165,8 +165,7 @@ def profile():
     if request.method == "POST":
     
         update_username = request.form["edit_username"]
-        username_taken = User.query.filter_by(username=update.username).first()  
-
+        username_taken = User.query.filter_by(username=update_username).first()  
         
         update.password= request.form["edit_password"] 
         update.bio = request.form["edit_bio"]
