@@ -6,6 +6,9 @@ import secrets
 import os
 from flask_socketio import SocketIO, emit, join_room
 from flask_mysqldb import MySQL
+from sqlalchemy import exc 
+from sqlalchemy.exc import IntegrityError
+
 
 # from flask_login import LoginManager
 
@@ -33,7 +36,7 @@ class User(db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
-    password = db.Column(db.String(15), unique=True, nullable=False)
+    password = db.Column(db.String(15), nullable=False)
     password_hash = db.Column(db.String(1512), nullable=False)
     image = db.Column(db.String(2000) , nullable=True, default='default.svg')
     bio = db.Column(db.String(150), nullable=True)
@@ -153,57 +156,62 @@ def logout():
 
 
 # Profile info
-@app.route("/profile", methods=["GET","POST"])
+@app.route("/profile", methods=["GET", "POST"])
 def profile():
-        # form = profile_form()
-        user = User.query.filter_by(username=session["username"]).first()   
-        id = user.id
-        update= User.query.get_or_404(id)
-        if request.method =="POST":
-            update.username = request.form["edit_username"]
-            update.password = request.form["edit_password"] 
-            update.bio = request.form["edit_bio"]
-            session["bio"] = update.bio
-            
+    user = User.query.filter_by(username=session["username"]).first()   
+    id = user.id
+    update = User.query.get_or_404(id)
 
-            # Update pfp
-            if request.files["pfp-select"]:
-                image = request.files["pfp-select"]
-                
-                if image and image.filename != '':
-                    random_hex = secrets.token_hex(8)
-                    _, f_ext = os.path.splitext(image.filename)
-                    image_path = random_hex + f_ext 
-                    image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
-                    update.image = image_path
-                    session["pfp_path"] = image_path
-                    print("image saved")
-            #Update genre selection
-            if request.form.get("edit_genre"):
-                update.genres = request.form.get("edit_genre")
-                genre_list = update.genres.split(',') 
-         
-                  
-                User_genre.query.filter_by(user_id=update.id).delete()
-                for genre_name in genre_list:
-                    genre = Music_genres.query.filter_by(music_genres=genre_name).first()
-                    if genre:
-                        music = User_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
-                        db.session.add(music)
+    if request.method == "POST":
+    
+        update_username = request.form["edit_username"]
+        username_taken = User.query.filter_by(username=update.username).first()  
 
-                session["genre_selected"] = genre_list
-                update.genres=session["genre_selected"]
-            
-            else:
-                update.genres=session["genre_selected"]
+        
+        update.password= request.form["edit_password"] 
+        update.bio = request.form["edit_bio"]
+        session["bio"] = update.bio
+        
+        #Check if username is taken
+        if username_taken and username_taken.id != update.id:
+            return render_template("profile.html", update=update, user=session["username"], error="Username already exists")  
+        update.username= update_username
+        #Update pfp
+        if request.files["pfp-select"]:
+            image = request.files["pfp-select"]
+            if image and image.filename != '':
+                random_hex = secrets.token_hex(8)
+                _, f_ext = os.path.splitext(image.filename)
+                image_path = random_hex + f_ext 
+                image.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], image_path))
+                update.image = image_path
+                session["pfp_path"] = image_path
+                print("image saved")
 
+        #Update genre selection
+        if request.form.get("edit_genre"):
+            update.genres = request.form.get("edit_genre")
+            genre_list = update.genres.split(',') 
+            User_genre.query.filter_by(user_id=update.id).delete()
+            for genre_name in genre_list:
+                genre = Music_genres.query.filter_by(music_genres=genre_name).first()
+                if genre:
+                    music = User_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
+                    db.session.add(music)
 
-            session["username"] = update.username
-            db.session.commit()
-        update.genres=session["genre_selected"]
+            session["genre_selected"] = genre_list
+            update.genres = session["genre_selected"]
+        else:
+            update.genres = session["genre_selected"]
 
-        return render_template("profile.html" , update=update, user=session["username"]) 
+        session["username"] = update.username
+        
+        db.session.commit()
 
+    return render_template("profile.html", update=update, user=session["username"])
+        
+           
+        
         # return redirect(url_for("home"))
 def add_text(chatroomID, content):
     try:

@@ -30,3 +30,7 @@ SQLAlchemy==2.0.32
 typing_extensions==4.12.2
 Werkzeug==3.0.4
 wsproto==1.2.0
+BareNecessities==0.2.8
+Flask-Login==0.6.3
+Mail==2.1.0
+WTForms==3.1.2
