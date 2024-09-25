@@ -1,0 +1,2 @@
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+static/profile_pics/63e42eb7e2d8ccb3.mp4 filter=lfs diff=lfs merge=lfs -text
