@@ -6,13 +6,8 @@
 <a href="{{url_for("logout" )}}" class="btn btn-logout">Logout</a>
     
 
-<h1> THIS IS YOUR PROFILE PAGE{{update.username}}</h1>
-{{display_genres}}
-<ul>
-  {% for genre in genre_names %}
-  <li>{{ genre }}</li>
-  {% endfor %}
-</ul>
+<h1> THIS IS YOUR PROFILE PAGE {{update.username}}</h1>
+{{update.genres}}
 
 {{music}}
  <h1> Profile Image:</h1>
@@ -39,23 +34,23 @@
    <img src="{{ url_for('static', filename='profile_pics/' + update.image) }}" id="new_frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
 
    <h1>Music Genre Selection</h1>  
-
+<h2>Pick your Top music genre</h2>
    <input type="hidden" name="edit_genre" id="edit_genre">
 
    <div class="dropdown">
      <button>Select Music Genres</button>
      <div class="content">
-       <input type="checkbox" id="mg1"  name="Hiphop" value="Hip hop" onclick="submitGenres()" >    
+       <input type="radio" id="mg1"  name="music" value="Hip hop" onclick="submitGenres()" >    
        <label for="mg1">Hip Hop</label>   
-       <input type="checkbox" id="mg2"  name="R&B" value="R&B" onclick="submitGenres()" >
+       <input type="radio" id="mg2"  name="music" value="R&B" onclick="submitGenres()" >
        <label for="mg2">R&B</label>
-       <input type="checkbox" id="mg3"  name="Rock" value="Rock" onclick="submitGenres()" >
+       <input type="radio" id="mg3"  name="music" value="Rock" onclick="submitGenres()" >
        <label for="mg3">Rock</label>
-       <input type="checkbox" id="mg4"  name="Electronic music" value="Electronic music" onclick="submitGenres()" >
+       <input type="radio" id="mg4"  name="music" value="Electronic music" onclick="submitGenres()" >
        <label for="mg4">Electronic music</label>
-       <input type="checkbox" id="mg5"  name="Pop" value="Pop" onclick="submitGenres()" >
+       <input type="radio" id="mg5"  name="music" value="Pop" onclick="submitGenres()" >
        <label for="mg5">Pop</label>
-       <input type="checkbox" id="mg6"  name="KPOP" value="KPOP" onclick="submitGenres()" >
+       <input type="radio" id="mg6"  name="music" value="KPOP" onclick="submitGenres()" >
        <label for="mg6">KPOP</label>
      </div>
    </div>

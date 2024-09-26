@@ -151,7 +151,8 @@ form button {
     border-radius: 50%;
     border: none;
     outline: none;
-    background-color: white;
+    background-image: url('/static/profile_pics/default.svg'); 
+    background-size: cover;
 }
 
 
@@ -191,3 +192,5 @@ form button {
 .dropdown a:hover{
     background-color: hsl(0, 0%, 90%);
 }
+
+
