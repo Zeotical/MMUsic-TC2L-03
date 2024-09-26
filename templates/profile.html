@@ -2,8 +2,8 @@
 
 {% block body%} 
 
-<a href="{{url_for("chatroom")}}" class="btn dashboard">Go back to chatrooms<a>
-<a href="{{url_for("logout" )}}" class="btn btn-logout">Logout</a>
+<a href="{{url_for("chatroom")}}" class="btn btn-primary">Go back to chatrooms<a>
+<a href="{{url_for("logout" )}}" class="btn btn-danger">Logout</a>
     
 
 <h1> THIS IS YOUR PROFILE PAGE {{update.username}}</h1>
@@ -109,5 +109,6 @@ function see_ps(){
   document.getElementById("edit_genre").value = selectedGenres.join(',');
 }
 </script>
+ 
 
 {% endblock %}
