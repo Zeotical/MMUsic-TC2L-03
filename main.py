@@ -310,6 +310,7 @@ def handle_text(data):
     text = data['text'] #Extracts the message text from the received data
     chatroomID = data['chatroomID']
     username = session["username"]
+    pfp = session["pfp_path"]
     
     save_message(text, chatroomID, username) #Calls add_text() to save the message to the database
     emit('message', {'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
