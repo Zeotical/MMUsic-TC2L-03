@@ -70,7 +70,7 @@ def get_messages(chatroomID):
         return False
 
 # Configure SQL Alchmey
-app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/registerdb?unix_socket=/opt/lampp/var/mysql/mysql.sock"
+app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/chat?unix_socket=/opt/lampp/var/mysql/mysql.sock"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 db = SQLAlchemy(app)
 
