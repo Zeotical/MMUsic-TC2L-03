@@ -7,8 +7,12 @@ $(function(){
     });
 
     socket.on('message', function(data) {
+        if (data.username==='System'){
+            $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');
+        }
+        else {
         $('#messages').append('<li><img src=" '+ pfp_url + '" class="chatpfp"> <span class="open">' + data.username +' </span> : ' + data.text + '</li>');
-    });
+    };
 
     $('#send').click(function(event) {
         event.preventDefault();
@@ -32,4 +36,4 @@ $(document).on('click', '.open', function() {
 
 $('#close').click(function() {
     $('#modal_container').removeClass('show');
-});
+});})
