@@ -160,6 +160,8 @@ form button {
     display: none;
 }
 
+/* DROPDOWN */
+
 .dropdown{
     display: inline-block;
 }
@@ -193,4 +195,4 @@ form button {
     background-color: hsl(0, 0%, 90%);
 }
 
-
+/* PROFILE PAGE */

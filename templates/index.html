@@ -12,7 +12,11 @@
 
     <div class="btn-box">
       <button type="button" id="next">Next</button>
+      <br>
+      <a href="{{url_for("login")}}" class="lnk-login">Already have an account? Login !</a>
+
     </div>
+    
   </form>
 
   <form id="form2" action="{{url_for("register")}}" method="post">
@@ -20,7 +24,7 @@
 
 
     <div class="dropdown">
-      <button>Select Music Genres</button>
+      <button>Select Your Top Music Genre</button>
       <div class="content">
         <input type="radio" id="mg1"  name="music" value="Hip hop" onclick="submitGenres()" >    
         <label for="mg1">Hip Hop</label>   

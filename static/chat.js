@@ -7,7 +7,7 @@ $(function(){
     });
 
     socket.on('message', function(data) {
-        $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');
+        $('#messages').append('<li><img src=" '+ pfp_url + '" class="chatpfp"> <span class="open">' + data.username +' </span> : ' + data.text + '</li>');
     });
 
     $('#send').click(function(event) {
@@ -24,4 +24,12 @@ $(function(){
             $('#send').click();
         }
     });
+});
+
+$(document).on('click', '.open', function() {
+    $('#modal_container').addClass('show');
+});
+
+$('#close').click(function() {
+    $('#modal_container').removeClass('show');
 });

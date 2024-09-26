@@ -313,7 +313,7 @@ def handle_text(data):
     pfp = session["pfp_path"]
     
     save_message(text, chatroomID, username) #Calls add_text() to save the message to the database
-    emit('message', {'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
+    emit('message', {'pfp': pfp,'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
     
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
