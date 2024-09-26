@@ -1,5 +1,7 @@
 $(document).ready(function() {
     $('#text').keyup(function() {
+$(document).ready(function() {
+    $('#text').keyup(function() {
         var searchQuery = $(this).val();
         if (searchQuery !== '') {
             $.ajax({
@@ -7,6 +9,7 @@ $(document).ready(function() {
                 method: 'POST',
                 data: { query: searchQuery },
                 success: function(data) {
+                    console.log(data);
                     let suggestions = '';
                     if (data.length > 0) {
                         data.forEach(function(item) {  // No need to reverse if Flask already sorts
@@ -35,7 +38,9 @@ $(document).ready(function() {
 
 
     // Hide the search result when clicking outside
+    // Hide the search result when clicking outside
     $(document).on('click', function(e) {
+        if (!$(e.target).closest('#text').length && !$(e.target).closest('#show-list').length) {
         if (!$(e.target).closest('#text').length && !$(e.target).closest('#show-list').length) {
             $('#show-list').hide();
         }
@@ -45,8 +50,15 @@ $(document).ready(function() {
     // Handle click on search result
     $(document).on('click', '.link-class', function() {
     
+
+    // Handle click on search result
+    $(document).on('click', '.link-class', function() {
+    
         var selectedFile = $(this).data('file');
         var filePath = '/static/music.mp3/' + selectedFile;
+        console.log("Selected file path: ", filePath);
+
+        // Set audio player source and play the selected song
         console.log("Selected file path: ", filePath);
 
         // Set audio player source and play the selected song
