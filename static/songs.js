@@ -7,10 +7,9 @@ $(document).ready(function() {
                 method: 'POST',
                 data: { query: searchQuery },
                 success: function(data) {
-                    console.log(data);
                     let suggestions = '';
                     if (data.length > 0) {
-                        data.reverse().forEach(function(item) {
+                        data.forEach(function(item) {  // No need to reverse if Flask already sorts
                             suggestions += `<li class="list-group-item link-class" data-file="${item[3]}">
                                 <strong>${item[0]} - ${item[1]}</strong><br>
                                 <small>${item[2]}</small>
@@ -22,12 +21,18 @@ $(document).ready(function() {
                         $('#show-list').show();
                     }
                     $('#show-list').html(suggestions);
+                },
+                error: function() {
+                    $('#show-list').html('<li class="list-group-item link-class">Error retrieving data</li>');
+                    $('#show-list').show();
                 }
             });
         } else {
-            $('#show-list').hide();
+            $('#show-list').hide();  // Hide the suggestions if search query is empty
         }
     });
+});
+
 
     // Hide the search result when clicking outside
     $(document).on('click', function(e) {
@@ -83,6 +88,15 @@ $(document).ready(function() {
             console.error('Error playing the song:', error);
         });
     });
+
+
+
+$(document).on('click', '.open', function() {
+    $('#modal_container').addClass('show');
+});
+
+$('#close').click(function() {
+    $('#modal_container').removeClass('show');
 });
 
 

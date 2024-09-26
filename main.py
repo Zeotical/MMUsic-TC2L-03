@@ -70,7 +70,7 @@ def get_messages(chatroomID):
         return False
 
 # Configure SQL Alchmey
-app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/registerdb?unix_socket=/opt/lampp/var/mysql/mysql.sock"
+app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/chat?unix_socket=/opt/lampp/var/mysql/mysql.sock"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 db = SQLAlchemy(app)
 
@@ -318,19 +318,49 @@ def handle_text(data):
 def livesearch():
     search_text = request.form.get('query', '')
     cursor = mysql.connection.cursor()
-    if search_text:
-        query = """
-        SELECT performer, title, lyric, source FROM songs 
-        WHERE performer LIKE %s OR title LIKE %s OR lyric LIKE %s
-        ORDER BY title ASC LIMIT 10
-        """
-        search_pattern = f"%{search_text}%"
-        cursor.execute(query, (search_pattern, search_pattern, search_pattern))
-        search_results = cursor.fetchall()
+
+    # Get the user's selected genres from session (it's a list of genre names)
+    genre_selected = session.get('genre_selected')
+
+    if search_text and genre_selected:
+        # Convert genre names to genre IDs
+        cursor.execute("SELECT id FROM music_genres WHERE music_genres IN %s", (tuple(genre_selected),))
+        genre_ids = cursor.fetchall()
+
+        if genre_ids:
+            # Extract genre IDs from the query result
+            genre_ids = [genre[0] for genre in genre_ids]  # Convert tuples to list of IDs
+
+            # Construct a query with placeholders for the genres
+            query = """
+            SELECT performer, title, lyric, source 
+            FROM songs 
+            WHERE (performer LIKE %s OR title LIKE %s OR lyric LIKE %s)
+            ORDER BY
+              CASE
+                WHEN genre_id IN %s THEN 1  -- Put selected genres at the top
+                ELSE 2  -- Non-selected genres go at the bottom
+              END,
+              title ASC  -- Sort alphabetically within each group
+            LIMIT 10
+            """
+            
+            search_pattern = f"%{search_text}%"
+            cursor.execute(query, (search_pattern, search_pattern, search_pattern, tuple(genre_ids)))
+            search_results = cursor.fetchall()
+        else:
+            search_results = []
     else:
         search_results = []
+
     cursor.close()
+
+    # Return the results as JSON
     return jsonify(search_results)
+
+
+
+
 
 if __name__ =="__main__":
     with app.app_context():
