@@ -309,10 +309,10 @@ def handle_joined(data):
 def handle_text(data):
     text = data['text'] #Extracts the message text from the received data
     chatroomID = data['chatroomID']
-    user_id = "User"
+    username = session["username"]
     
-    save_message(text, chatroomID, user_id) #Calls add_text() to save the message to the database
-    emit('message', {'username': user_id, 'text': text}, room=chatroomID) #Emits the message to all connected clients
+    save_message(text, chatroomID, username) #Calls add_text() to save the message to the database
+    emit('message', {'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
     
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
