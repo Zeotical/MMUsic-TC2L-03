@@ -11,7 +11,7 @@ $(document).ready(function() {
                     console.log(data);
                     let suggestions = '';
                     if (data.length > 0) {
-                        data.reverse().forEach(function(item) {  // No need to reverse if Flask already sorts
+                        data.forEach(function(item) {  // No need to reverse if Flask already sorts
                             suggestions += `<li class="list-group-item link-class" data-file="${item[3]}">
                                 <strong>${item[0]} - ${item[1]}</strong><br>
                                 <small>${item[2]}</small>

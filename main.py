@@ -186,21 +186,12 @@ def register():
         session["genre_selected"]= genre_list
 
         return redirect(url_for("chatroom"))
-# Dashboard
-# @app.route("/dashboard")
-# def dashboard():
-#     if "username" in session:
-#      user = User.query.filter_by(username=session["username"]).first()
 
-#      return render_template("dashboard.html", username= session["username"], user=user)
-#     return redirect(url_for("home"))
 # Logout
 @app.route("/logout")
 def logout():
     session.pop("username", None)
     return redirect(url_for("home"))
-
-
 
 # Profile info
 @app.route("/profile", methods=["GET", "POST"])
@@ -208,6 +199,8 @@ def profile():
     user = User.query.filter_by(username=session["username"]).first()   
     id = user.id
     update = User.query.get_or_404(id)
+    register_genre=User_genre.query.filter_by(user_id=update.id).all()
+    genre_list = [genre.genre_name for genre in register_genre]
 
     if request.method == "POST":
     
@@ -216,8 +209,10 @@ def profile():
 
         
         update.password= request.form["edit_password"] 
-        update.bio = request.form["edit_bio"]
-        session["bio"] = update.bio
+       
+        if request.form["edit_bio"]:
+            update.bio = request.form["edit_bio"]  
+            session["bio"]= update.bio
         
         #Check if username is taken
         if username_taken and username_taken.id != update.id:
@@ -255,7 +250,7 @@ def profile():
         
         db.session.commit()
 
-    return render_template("profile.html", update=update, user=session["username"])
+    return render_template("profile.html", update=update, user=session["username"],genres=genre_list)
 
 
 @app.route('/chatroom', methods=['GET', 'POST'])
@@ -323,7 +318,7 @@ def handle_text(data):
     pfp = session["pfp_path"]
     
     save_message(text, chatroomID, username) #Calls add_text() to save the message to the database
-    emit('message', {'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
+    emit('message', {'pfp':pfp,'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
     
 @app.route('/livesearch', methods=['POST'])
 def livesearch():

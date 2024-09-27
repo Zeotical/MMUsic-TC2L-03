@@ -4,41 +4,123 @@
 
 <a href="{{url_for("chatroom")}}" class="btn btn-primary">Go back to chatrooms<a>
 <a href="{{url_for("logout" )}}" class="btn btn-danger">Logout</a>
+
     
+<h1>PROFILE  </h1>
 
-<h1> THIS IS YOUR PROFILE PAGE {{update.username}}</h1>
-{{update.genres}}
+<div class="contain">
+  <div class="card">
+     <div class="card-inner">
+         <div class="front">
+          <h1>{{update.username}}'s Profile info</h1>
+            <h1>Username:</h1>
+            <span id="s_username">{{update.username}}</span>
 
-{{music}}
+            <h1> Profile Image:</h1>
+
+                <img src="{{ url_for('static', filename='profile_pics/' + update.image)  }}"   alt="Profile Picture"style="width: 100px; height:100px";/>
+            
+            
+            <h1> Music Genre:</h1>
+            {{update.genres}}
+
+            {% for genre in genres %}
+              <li>{{ genre }}</li>
+            {% endfor %}
+
+            <h1>Bio:</h1>
+            {{update.bio}}
+            <br>
+          </div>
+             <div class="back">
+              <form id="profile_form" action="{{url_for("profile")}}" method="post"  enctype="multipart/form-data">
+                <h1>Edit Profile info</h1>
+                
+                <h2>Username</h2>
+                 <input type="text" name="edit_username" placeholder="{{update.username}}" id="profile_username" class="input-field" required autofocus maxlength="25">
+                 <br>
+                <h2>Password</h2>
+                 <input type="password" name="edit_password" placeholder="{{update.password}}" id= "profile_password" class="input-field" required autofocus maxlength="15">
+                 <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="visibility" >
+                <h2>Profile Picture</h2>
+                 <input type="file" name="pfp-select"  id="new_file" onchange="preview()">
+                 <img src="{{ url_for('static', filename='profile_pics/' + update.image) }}" id="new_frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
+              
+              <h2>Select Your Top Music Genre</h2>
+                 <input type="hidden" name="edit_genre" id="edit_genre">
+                 <div class="dropdown">
+                   <button onclick="return false;">Select Music Genres</button>
+                   <div class="content">
+                     <input type="radio" id="mg1"  name="music" value="Hip hop" onclick="submitGenres()" >    
+                     <label for="mg1">Hip Hop</label>   
+                     <input type="radio" id="mg2"  name="music" value="R&B" onclick="submitGenres()" >
+                     <label for="mg2">R&B</label>
+                     <input type="radio" id="mg3"  name="music" value="Rock" onclick="submitGenres()" >
+                     <label for="mg3">Rock</label>
+                     <input type="radio" id="mg4"  name="music" value="Electronic music" onclick="submitGenres()" >
+                     <label for="mg4">Electronic music</label>
+                     <input type="radio" id="mg5"  name="music" value="Pop" onclick="submitGenres()" >
+                     <label for="mg5">Pop</label>
+                     <input type="radio" id="mg6"  name="music" value="KPOP" onclick="submitGenres()" >
+                     <label for="mg6">KPOP</label>
+                   </div>
+                 </div>
+                 <h2>Bio</h2>
+                 <input type="text" class="input-field" maxlength="150" name="edit_bio" id="profile_bio" placeholder="{{update.bio}}">
+              <br>
+                <input  type="submit"  value="Edit" class="btn-edit"/>
+              
+               </form>
+
+             </div>
+         
+     </div>
+     </div>
+</div>
+ 
+
+
+
+<!-- <h1>Username:</h1>
+<span id="s_username">{{update.username}}</span>
+
  <h1> Profile Image:</h1>
- {% if update.image %}
-    <img src="{{ url_for('static', filename='profile_pics/' + update.image)  }}"   alt="Profile Picture"style="width: 100px; height:100px";/>
- {% else %}
-     <p>No profile picture uploaded.</p>
- {% endif %}
- <h1>Username:</h1>
- {{update.username}}
 
- <h1>BIO</h1>
+    <img src="{{ url_for('static', filename='profile_pics/' + update.image)  }}"   alt="Profile Picture"style="width: 100px; height:100px";/>
+ 
+ 
+<h1> Music Genre:</h1>
+ {{update.genres}}
+
+    {% for genre in genres %}
+        <li>{{ genre }}</li>
+    {% endfor %}
+
+
+ <h1>Bio:</h1>
  {{update.bio}}
+
+
+
 
  <div class="profile_info">
  <form id="profile_form" action="{{url_for("profile")}}" method="post"  enctype="multipart/form-data">
-   <h1>Edit Profile info</h1>
+  <h1>Edit Profile info</h1>
+  
+  <h2>Username</h2>
    <input type="text" name="edit_username" placeholder="{{update.username}}" id="profile_username" class="input-field" required autofocus maxlength="25">
    <br>
+  <h2>Password</h2>
    <input type="password" name="edit_password" placeholder="{{update.password}}" id= "profile_password" class="input-field" required autofocus maxlength="15">
-   <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="image" >
-
+   <input type="image" src="https://www.svgrepo.com/show/453442/visibility-off.svg" onclick="see_ps();return false;" id="visibility" >
+  <h2>Profile Picture</h2>
    <input type="file" name="pfp-select"  id="new_file" onchange="preview()">
    <img src="{{ url_for('static', filename='profile_pics/' + update.image) }}" id="new_frame" width="100px" height="100px" onclick="trigger_fileinput()"/>
 
-   <h1>Music Genre Selection</h1>  
-<h2>Pick your Top music genre</h2>
+<h2>Select Your Top Music Genre</h2>
    <input type="hidden" name="edit_genre" id="edit_genre">
-
    <div class="dropdown">
-     <button>Select Music Genres</button>
+     <button onclick="return false;">Select Music Genres</button>
      <div class="content">
        <input type="radio" id="mg1"  name="music" value="Hip hop" onclick="submitGenres()" >    
        <label for="mg1">Hip Hop</label>   
@@ -54,17 +136,16 @@
        <label for="mg6">KPOP</label>
      </div>
    </div>
-   <h1>Bio</h1>
+   <h2>Bio</h2>
    <input type="text" class="input-field" maxlength="150" name="edit_bio" id="profile_bio" placeholder="{{update.bio}}">
-   
+<br>
+  <input  type="submit"  value="Edit" class="btn-edit"/>
 
-    <input  type="submit"  value="edit" class="btn-register"/>
-
- </form>
+ </form> -->
 
  <script>
 function see_ps(){
-        var y=document.getElementById("image")
+        var y=document.getElementById("visibility")
         var x= document.getElementById("profile_password");
         if (x.type=="password") {
           x.type="text"; 
