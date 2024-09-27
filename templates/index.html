@@ -2,6 +2,8 @@
 
 {% block body%} 
 
+<h1>WElcome to MMUsic Chat</h1>
+
 <div class="register">
   <form id="register_form" action="{{url_for("register")}}" method="post" >
     <h1>Register</h1>
@@ -12,11 +14,9 @@
 
     <div class="btn-box">
       <button type="button" id="next">Next</button>
-      <br>
-      <a href="{{url_for("login")}}" class="lnk-login">Already have an account? Login !</a>
-
     </div>
-    
+    <a href="{{url_for("login")}}" class="lnk-login">Already have an account? Login !</a>
+
   </form>
 
   <form id="form2" action="{{url_for("register")}}" method="post">
@@ -59,9 +59,9 @@
     
     <div class="btn-box">
       <button type="button" id="back2">Back</button>
-      <input  type="submit"  value="register" class="btn-register"/>
-
     </div>
+    <input  type="submit"  value="register" class="btn-register"/>
+
   </form>  
 
   <div class="step-row">
@@ -73,13 +73,8 @@
   </div>
     
 </div>
-<a href="{{url_for("login")}}" class="lnk-login">Already have an account? Login !</a>
-
 
  <script>
-
- 
-
   function see_ps(){
     var y=document.getElementById("image")
     var x= document.getElementById("ps");
