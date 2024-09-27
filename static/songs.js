@@ -11,7 +11,7 @@ $(document).ready(function() {
                     console.log(data);
                     let suggestions = '';
                     if (data.length > 0) {
-                        data.forEach(function(item) {  // No need to reverse if Flask already sorts
+                        data.reverse().forEach(function(item) {  // No need to reverse if Flask already sorts
                             suggestions += `<li class="list-group-item link-class" data-file="${item[3]}">
                                 <strong>${item[0]} - ${item[1]}</strong><br>
                                 <small>${item[2]}</small>
@@ -36,18 +36,15 @@ $(document).ready(function() {
 });
 
 
-    // Hide the search result when clicking outside
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('#text').length && !$(e.target).closest('#show-list').length) {
-        if (!$(e.target).closest('#text').length && !$(e.target).closest('#show-list').length) {
-            $('#show-list').hide();
-        }
-    };
+  // Hide the search result when clicking outside
+$(document).on('click', function(e) {
+    if (!$(e.target).closest('#text').length && !$(e.target).closest('#show-list').length) {
+        $('#show-list').hide();
+    }
+});
 
 
-    // Handle click on search result
-    $(document).on('click', '.link-class', function() {
-    
+
 
     // Handle click on search result
     $(document).on('click', '.link-class', function() {
@@ -107,4 +104,3 @@ $(document).ready(function() {
     $('#close').click(function() {
         $('#modal_container').removeClass('show');
     });
-})})
