@@ -25,7 +25,7 @@ text-align: center;
 font-size: xx-large;
 }
 
-.btn-register, .btn-login , .lnk-login{
+.btn-register, .lnk-login{
     display: block;
     width:100%;
     margin: 0 auto;
@@ -48,7 +48,7 @@ font-size: xx-large;
     display: block;   
     position: relative;
     bottom: 77px;
-    left: 830px;
+    left: 750px;
     width: 30px;
     height: 30px;
 }
@@ -160,6 +160,8 @@ form button {
     display: none;
 }
 
+/* DROPDOWN */
+
 .dropdown{
     display: inline-block;
 }
@@ -193,4 +195,101 @@ form button {
     background-color: hsl(0, 0%, 90%);
 }
 
+/* PROFILE PAGE */
+
+/* #profile_info */
+
+
+#visibility {
+    display: block;   
+    position: relative;
+    bottom: 80px;
+    right: -245px;
+    width: 35px;
+    height: 35px;
+}
+
+.profile_container{
+
+    text-align: center;
+    font-size: larger;
+    text-size-adjust: 700px;
+}
+
+
+#s_username{
+    font-size: larger;
+    
+}
+
+.btn-edit ,.btn-login{
+    display: block;
+    width:140px;
+    margin: 0 auto;
+    font-size: xx-large;
+    border-radius: 10px;
+    cursor: pointer;
+    background: transparent;
+
+}
+
+/* {
+    text-align: justify;
+} */
+
+/* T */
+
+.contain{
+    width:100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e3dbf6, #a99bf9 );
+    padding: 10px;
+}
+
+.card{
+    width: 350px;
+    height: 555px;
+    margin: 100px auto 0;
+    perspective: 1000px;
+}
+
+.card-inner{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+}
+
+.front {
+    width:100%;
+    height:100%;
+    border-radius: 15px;
+    position:absolute;
+    background: #fff;
+    text-align: center;
+    backface-visibility: hidden;
+}
+
+
+.back{
+    background: #fff;
+    padding: 20px 40px;
+    transform: rotateY(180deg);
+    width:100%;
+    height:180%;
+    border-radius: 15px;
+    position:absolute;
+    backface-visibility: hidden;
+
+}
+.back button{
+    display: inline;
+    text-align: center;
+}
+
+
+.card:hover .card-inner{
+    transform: rotateY(180deg);
+}
 
