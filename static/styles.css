@@ -160,6 +160,8 @@ form button {
     display: none;
 }
 
+/* DROPDOWN */
+
 .dropdown{
     display: inline-block;
 }
@@ -193,4 +195,55 @@ form button {
     background-color: hsl(0, 0%, 90%);
 }
 
+/* PROFILE PAGE */
 
+/* #profile_info */
+
+
+#visibility {
+    display: block;   
+    position: relative;
+    bottom: 80px;
+    right: -745px;
+    width: 35px;
+    height: 35px;
+}
+
+.profile_container{
+
+    text-align: center;
+    font-size: larger;
+    text-size-adjust: 700px;
+}
+
+#profile_form {
+    background-color: #fff; 
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 30px 50px;
+    width: 600px;
+    max-width: 100%;
+    text-align: center;
+    margin: 0 auto; 
+}
+
+
+#s_username{
+    font-size: larger;
+    
+}
+
+.btn-edit{
+    display: block;
+    width:140px;
+    margin: 0 auto;
+    font-size: xx-large;
+    border-radius: 10px;
+    cursor: pointer;
+    background: transparent;
+
+}
+
+/* {
+    text-align: justify;
+} */

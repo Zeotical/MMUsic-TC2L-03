@@ -64,7 +64,7 @@ $(document).ready(function() {
         // Append the profile picture, username, lyrics, and play icon to the chat
         $('#messages').append(`
             <li class="chat-message">
-                <img src="${pfp_url}" class="chatpfp"> <span class="open">${username}</span>: ${lyrics} 
+                <img src="${pfp_url}" class="chatpfp"> <span class="open">${username}</span> : ${lyrics} 
                 <ion-icon name="play-circle-outline" class="play-icon" style="cursor:pointer;" data-file="${selectedFile}"></ion-icon>
             </li>
         `);
@@ -99,11 +99,3 @@ $('#close').click(function() {
     $('#modal_container').removeClass('show');
 });
 
-
-$(document).on('click', '.open', function() {
-    $('#modal_container').addClass('show');
-});
-
-$('#close').click(function() {
-    $('#modal_container').removeClass('show');
-});
