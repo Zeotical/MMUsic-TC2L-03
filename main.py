@@ -183,14 +183,7 @@ def register():
         session["genre_selected"]= genre_list
 
         return redirect(url_for("chatroom"))
-# Dashboard
-# @app.route("/dashboard")
-# def dashboard():
-#     if "username" in session:
-#      user = User.query.filter_by(username=session["username"]).first()
 
-#      return render_template("dashboard.html", username= session["username"], user=user)
-#     return redirect(url_for("home"))
 # Logout
 @app.route("/logout")
 def logout():
@@ -205,21 +198,25 @@ def profile():
     user = User.query.filter_by(username=session["username"]).first()   
     id = user.id
     update = User.query.get_or_404(id)
+    register_genre=User_genre.query.filter_by(user_id=update.id).all()
+    genre_list = [genre.genre_name for genre in register_genre]
 
     if request.method == "POST":
     
         update_username = request.form["edit_username"]
         username_taken = User.query.filter_by(username=update_username).first()  
-
-        
         update.password= request.form["edit_password"] 
-        update.bio = request.form["edit_bio"]
-        session["bio"] = update.bio
+
+        if request.form["edit_bio"]:
+            update.bio = request.form["edit_bio"]  
+            session["bio"]= update.bio
+
         
         #Check if username is taken
         if username_taken and username_taken.id != update.id:
             return render_template("profile.html", update=update, user=session["username"], error="Username already exists")  
         update.username= update_username
+
         #Update pfp
         if request.files["pfp-select"]:
             image = request.files["pfp-select"]
@@ -246,14 +243,14 @@ def profile():
             session["genre_selected"] = genre_list
             update.genres = session["genre_selected"]
         else:
+            session["genre_selected"] = genre_list
             update.genres = session["genre_selected"]
+            session["bio"]= update.bio
 
         session["username"] = update.username
-        
         db.session.commit()
 
-    return render_template("profile.html", update=update, user=session["username"])
-
+    return render_template("profile.html", update=update, user=session["username"],genres=genre_list)
 
 @app.route('/chatroom', methods=['GET', 'POST'])
 def chatroom():

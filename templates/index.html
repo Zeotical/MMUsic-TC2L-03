@@ -24,7 +24,7 @@
 
 
     <div class="dropdown">
-      <button>Select Your Top Music Genre</button>
+      <button type="button" onclick="return false;">Select Your Top Music Genre</button>
       <div class="content">
         <input type="radio" id="mg1"  name="music" value="Hip hop" onclick="submitGenres()" >    
         <label for="mg1">Hip Hop</label>   
@@ -77,6 +77,9 @@
 
 
  <script>
+
+ 
+
   function see_ps(){
     var y=document.getElementById("image")
     var x= document.getElementById("ps");
@@ -169,3 +172,13 @@ function submitGenres() {
   </script>
   
 {% endblock %} 
+
+<!-- $(".btn-register").click (function(event) {
+if {
+  username, session,{
+
+  }
+  alert("user alreadt here");
+} 
+
+}) -->
