@@ -1,5 +1,4 @@
-$(document).ready(function() {
-    $('#text').keyup(function() {
+
 $(document).ready(function() {
     $('#text').keyup(function() {
         var searchQuery = $(this).val();
@@ -38,13 +37,12 @@ $(document).ready(function() {
 
 
     // Hide the search result when clicking outside
-    // Hide the search result when clicking outside
     $(document).on('click', function(e) {
         if (!$(e.target).closest('#text').length && !$(e.target).closest('#show-list').length) {
         if (!$(e.target).closest('#text').length && !$(e.target).closest('#show-list').length) {
             $('#show-list').hide();
         }
-    });
+    };
 
 
     // Handle click on search result
@@ -101,13 +99,12 @@ $(document).ready(function() {
         });
     });
 
-
-
-$(document).on('click', '.open', function() {
-    $('#modal_container').addClass('show');
-});
-
-$('#close').click(function() {
-    $('#modal_container').removeClass('show');
-});
-
+    $(document).on('click', '.open', function() {
+        $('#modal_container').addClass('show');
+    });
+    
+    
+    $('#close').click(function() {
+        $('#modal_container').removeClass('show');
+    });
+})})
