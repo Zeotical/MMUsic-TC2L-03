@@ -292,14 +292,21 @@ def chat(chatroomID):
                 return jsonify({"status": "error", "message": "Failed to save message"}), 400
     
     cur = mysql.connection.cursor()
-    cur.execute("SELECT background_url FROM chatroom WHERE chatroomID = %s", (chatroomID,))
-    background_url = cur.fetchone()[0]  # Fetch the background URL
-    print(f"Background URL: {background_url}")
+    cur.execute("SELECT chatroom_name, background_url FROM chatroom WHERE chatroomID = %s", (chatroomID,))
+    chatroom = cur.fetchone()
     mysql.connection.commit()
     cur.close()
     
-    messages = get_messages(chatroomID)
-    return render_template('chat.html', messages=messages, chatroomID=chatroomID, user_id=user_id, background_url=background_url)
+    print(f"Chatroom fetched: {chatroom}")
+    
+    if chatroom:
+        chatroom_name = chatroom['chatroom_name'] if isinstance(chatroom, dict) else chatroom[0]
+        background_url = chatroom['background_url'] if isinstance(chatroom, dict) else chatroom[1]
+        # Render chatroom template with the correct background
+        messages = get_messages(chatroomID)
+        return render_template('chat.html', room_name=chatroom_name, background=background_url, user_id=user_id, messages=messages)
+    
+    return "Chatroom not found", 404
 
 
 @socketio.on('joined')
