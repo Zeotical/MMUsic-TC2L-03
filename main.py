@@ -6,11 +6,6 @@ import secrets
 import os
 from flask_socketio import SocketIO, emit, join_room
 from flask_mysqldb import MySQL
-from sqlalchemy import exc 
-from sqlalchemy.exc import IntegrityError
-
-
-# from flask_login import LoginManager
 
 app = Flask(__name__)
 app.secret_key="user_authentication11"
@@ -315,11 +310,15 @@ def handle_text(data):
     text = data['text'] #Extracts the message text from the received data
     chatroomID = data['chatroomID']
     username = session["username"]
-    pfp = session["pfp_path"]
-    
-    save_message(text, chatroomID, username) #Calls add_text() to save the message to the database
-    emit('message', {'pfp':pfp,'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
-    
+    user_id = session.get('user_id') # Use the actual user_id
+    pfp = session.get("pfp_path", "default.svg") # Provide a default if not present
+
+    # Save the message *before* emitting it
+    if save_message(text, chatroomID, user_id): # Use user_id, not username
+        emit('message', {'pfp': pfp, 'username': username, 'text': text}, room=chatroomID)
+    else:
+        # Handle the error, perhaps by sending an error message to the client
+        emit('message', {'username': 'System', 'text': 'Error: Message could not be saved.'}, room=chatroomID)
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
     search_text = request.form.get('query', '')

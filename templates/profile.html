@@ -22,7 +22,8 @@
             
             
             <h1> Music Genre:</h1>
-            {{update.genres}}
+            {{session['genre_selected']}}
+          
 
             {% for genre in genres %}
               <li>{{ genre }}</li>
