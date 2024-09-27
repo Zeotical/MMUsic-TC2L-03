@@ -122,12 +122,17 @@ select {
         margin:0;
     }
 
+body {
+    background-image: url("{{ url_for('static', filename='images/' + background) }}");
+    background-size: cover;
+    background-position: center;
+}
 {% endblock %}
 
 {% block body %}
-<div class="container; bg-primary" style="padding-top:10px; padding-bottom:20px">
+<div class="container; bg-dark" style="padding-top:10px; padding-bottom:20px">
     <div class="pg-header;">
-        <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic {{ chatroomID }}</strong></h1>
+        <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic {{ room_name.capitalize() }}</strong></h1>
     </div>
 </div>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -161,7 +166,7 @@ select {
 </nav>
 
 
-<div id="chat-window" class="card-body overflow-auto; mx-auto rounded">
+<div id="chat-window" class="card-body overflow-auto; mx-auto rounded bg-white">
     <form method="POST">
         <ul id="messages" class="list-unstyled">
             {% for message in messages %}
@@ -177,7 +182,7 @@ select {
             <input type="text" name="text" placeholder="Type a song's lyric or title..." style="width: 100%;" id="text" autocomplete="off" class="form-control"/>
         </div>
         <div class="col-2">
-            <button type="submit" class="btn btn-default; border border-primary" id="send">Send</button>
+            <button type="submit" class="btn btn-default; border border-primary bg-white" id="send">Send</button>
         </div>
         <div id="result">
             <div class="col-md-5" style="position:relative; margin-top:0px; margin-left:-25px; width: 1000px">

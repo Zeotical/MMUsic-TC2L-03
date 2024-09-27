@@ -250,6 +250,12 @@ def get_messages(chatroomID):
         print(f"Database error: {e}")
         return False
 
+chatroom_backgrounds = {
+    'love': 'love_background.jpg',
+    'motivation': 'motivation_background.jpg',
+    'general': 'general_background.jpg'
+}
+
 @app.route('/chats', methods=['GET', 'POST'])
 def chatroom():
     if 'user_id' not in session:
@@ -263,8 +269,9 @@ def chatroom():
         mysql.connection.commit()
         cur.close()
         if chatroom:
-            return redirect(url_for('chat', chatroomID=chatroom[0]))
-    cur.execute('SELECT chatroomID FROM chatroom')
+            chatroomID, background_url = chatroom
+            return redirect(url_for('chat', chatroomID=chatroomID, background=background_url))
+    cur.execute('SELECT chatroomID, chatroom_name FROM chatroom')
     genres = cur.fetchall()
     mysql.connection.commit()
     cur.close()
@@ -286,14 +293,24 @@ def chat(chatroomID):
                 return jsonify({"status": "error", "message": "Failed to save message"}), 400
     
     cur = mysql.connection.cursor()
-    cur.execute("SELECT background_url FROM chatroom WHERE chatroomID = %s", (chatroomID,))
-    background_url = cur.fetchone()[0]  # Fetch the background URL
-    print(f"Background URL: {background_url}")
+    cur.execute("SELECT chatroom_name, background_url FROM chatroom WHERE chatroomID = %s", (chatroomID,))
+    chatroom = cur.fetchone()
     mysql.connection.commit()
     cur.close()
     
-    messages = get_messages(chatroomID)
-    return render_template('chat.html', messages=messages, chatroomID=chatroomID, user_id=user_id, background_url=background_url)
+    print(f"Chatroom fetched: {chatroom}")
+    
+    if chatroom:
+        chatroom_name = chatroom['chatroom_name'] if isinstance(chatroom, dict) else chatroom[0]
+        background_url = chatroom['background_url'] if isinstance(chatroom, dict) else chatroom[1]
+        # Render chatroom template with the correct background
+        messages = get_messages(chatroomID)
+        return render_template('chat.html', room_name=chatroom_name, background=background_url, user_id=user_id, messages=messages)
+    
+    return "Chatroom not found", 404
+    
+    # messages = get_messages(chatroomID)
+    # return render_template('chat.html', messages=messages, chatroomID=chatroomID, user_id=user_id, background_url=background_url)
 
 
 @socketio.on('joined')
@@ -306,9 +323,14 @@ def handle_joined(data):
 def handle_text(data):
     text = data['text'] #Extracts the message text from the received data
     chatroomID = data['chatroomID']
-    user_id = "User"
-    save_message(text, chatroomID, user_id)
-    emit('message', {'username': user_id, 'text': text}, room=chatroomID)#Emits the message to all connected clients
+    user_id = session.get('user_id')
+    if user_id is None:
+        print("User is not logged in")
+        return
+    if save_message(text, chatroomID, user_id):
+        emit('message', {'username': user_id, 'text': text}, room=chatroomID)#Emits the message to all connected clients
+    else:
+        print("Failed to save message")
     
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
