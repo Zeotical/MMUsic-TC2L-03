@@ -190,8 +190,6 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("home"))
 
-
-
 # Profile info
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
