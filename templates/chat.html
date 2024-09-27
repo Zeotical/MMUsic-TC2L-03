@@ -9,6 +9,7 @@
 {% endblock %}
 
 
+
 {% block style %}
 #chat-window {
     width: 1000px;
@@ -135,6 +136,7 @@ body {
         <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic {{ room_name.capitalize() }}</strong></h1>
     </div>
 </div>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">MMUsic</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -164,7 +166,6 @@ body {
         </ul>
     </div>
 </nav>
-
 
 <div id="chat-window" class="card-body overflow-auto; mx-auto rounded bg-white">
     <form method="POST">

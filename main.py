@@ -15,10 +15,13 @@ from sqlalchemy.exc import IntegrityError
 app = Flask(__name__)
 app.secret_key="user_authentication11"
 app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
+app.secret_key="user_authentication11"
+app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'chat'
+app.config['MYSQL_UNIX_SOCKET'] = '/opt/lampp/var/mysql/mysql.sock'
 app.config['MYSQL_UNIX_SOCKET'] = '/opt/lampp/var/mysql/mysql.sock'
 
 mysql = MySQL(app)

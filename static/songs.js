@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
     $('#text').keyup(function() {
         var searchQuery = $(this).val();
@@ -7,9 +8,10 @@ $(document).ready(function() {
                 method: 'POST',
                 data: { query: searchQuery },
                 success: function(data) {
+                    console.log(data);
                     let suggestions = '';
                     if (data.length > 0) {
-                        data.forEach(function(item) {  // No need to reverse if Flask already sorts
+                        data.reverse().forEach(function(item) {  // No need to reverse if Flask already sorts
                             suggestions += `<li class="list-group-item link-class" data-file="${item[3]}">
                                 <strong>${item[0]} - ${item[1]}</strong><br>
                                 <small>${item[2]}</small>
@@ -34,12 +36,14 @@ $(document).ready(function() {
 });
 
 
-    // Hide the search result when clicking outside
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('#text').length && !$(e.target).closest('#show-list').length) {
-            $('#show-list').hide();
-        }
-    });
+  // Hide the search result when clicking outside
+$(document).on('click', function(e) {
+    if (!$(e.target).closest('#text').length && !$(e.target).closest('#show-list').length) {
+        $('#show-list').hide();
+    }
+});
+
+
 
 
     // Handle click on search result
@@ -47,6 +51,9 @@ $(document).ready(function() {
     
         var selectedFile = $(this).data('file');
         var filePath = '/static/music.mp3/' + selectedFile;
+        console.log("Selected file path: ", filePath);
+
+        // Set audio player source and play the selected song
         console.log("Selected file path: ", filePath);
 
         // Set audio player source and play the selected song
@@ -89,13 +96,11 @@ $(document).ready(function() {
         });
     });
 
-
-
-$(document).on('click', '.open', function() {
-    $('#modal_container').addClass('show');
-});
-
-$('#close').click(function() {
-    $('#modal_container').removeClass('show');
-});
-
+    $(document).on('click', '.open', function() {
+        $('#modal_container').addClass('show');
+    });
+    
+    
+    $('#close').click(function() {
+        $('#modal_container').removeClass('show');
+    });
