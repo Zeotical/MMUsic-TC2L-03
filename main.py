@@ -313,10 +313,11 @@ def handle_text(data):
     
     save_message(text, chatroomID, user_id) #Calls add_text() to save the message to the database
     emit('message', {'username': user_id, 'text': text}, room=chatroomID) #Emits the message to all connected clients
-    
+
+#live search    
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
-    search_text = request.form.get('query', '')
+    search_text = request.form.get('query', '') #retrieve input
     cursor = mysql.connection.cursor()
 
     # Get the user's selected genres from session (it's a list of genre names)
@@ -325,7 +326,7 @@ def livesearch():
     if search_text and genre_selected:
         # Convert genre names to genre IDs
         cursor.execute("SELECT id FROM music_genres WHERE music_genres IN %s", (tuple(genre_selected),))
-        genre_ids = cursor.fetchall()
+        genre_ids = cursor.fetchall() #fetch genre id
 
         if genre_ids:
             # Extract genre IDs from the query result
