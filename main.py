@@ -260,6 +260,19 @@ def profile():
 
         # return redirect(url_for("home"))
 
+def add_text(chatroomID, content):
+    try:
+        print(f"Attempting to insert message: '{content}' into chatroom: {chatroomID}")
+        query = "INSERT INTO messages (chatroomID, content) VALUES (%s, %s)" #insert typed messages to database(chat) table(messages) column(content)
+        cur = mysql.connection.cursor()
+        cur.execute(query, (chatroomID, content))
+        mysql.connection.commit()
+        print("Message successfully added.")
+    except Exception as e:
+        print(f"Error saving message to database: {e}")
+    finally:
+        cur.close()
+
 @app.route('/chats', methods=['GET', 'POST'])
 def chatroom():
     if 'user_id' not in session:
@@ -327,6 +340,7 @@ def handle_text(data):
     username = session['username']
     
     # Store the message in the database
+    add_text(chatroomID, text)
     
     # Emit the message to all users in the chatroom
     emit('message', {
