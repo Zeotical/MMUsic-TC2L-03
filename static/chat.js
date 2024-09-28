@@ -10,9 +10,7 @@ $(function(){
         if (data.username==='System'){
             $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');
         }
-        else {
-        $('#messages').append('<li><img src=" '+ pfp_url + '" class="chatpfp"> <span class="open">' + data.username +' </span> : ' + data.text + '</li>');
-    };
+    
 
     $('#send').click(function(event) {
         event.preventDefault();
