@@ -5,17 +5,7 @@
 <a href="{{url_for("chatroom")}}" class="btn btn-primary">Go back to chatrooms<a>
 <a href="{{url_for("logout" )}}" class="btn btn-danger">Logout</a>
 
-{% with messages = get_flashed_messages(with_categories=True) %}
-      {% if messages %}
-        
-          {% for category, message in messages %}
-            <p class="{{ category }}">{{ message }}</p>
-          {% endfor %}
     
-      {% endif %}
-    {% endwith %}
- 
-
 <h1>Hover over to edit your profile info.  </h1>
 
 <div class="contain">

@@ -217,7 +217,6 @@ def profile():
         
         #Check if username is taken
         if username_taken and username_taken.id != update.id:
-            flash('Username Taken.', 'success')
             return render_template("profile.html", update=update, user=session["username"], error="Username already exists")  
         update.username= update_username
         #Update pfp
@@ -251,7 +250,7 @@ def profile():
         session["username"] = update.username
         
         db.session.commit()
-        flash('Profile updated!', 'success')
+
     return render_template("profile.html", update=update, user=session["username"],genres=genre_list)
 
 
