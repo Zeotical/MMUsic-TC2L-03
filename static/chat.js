@@ -60,20 +60,35 @@ $(document).ready(function() {
     });
 
     // Listen for messages and lyrics from the server
-    socket.on('message', function(data) {
-        var username = data.username;
-        var lyrics = data.lyric;
-        var selectedFile = data.file;
-        if (data.username==='System'){
-            $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');}
-        else{
+socket.on('message', function(data) {
+    var username = data.username;
+    var lyrics = data.lyric;
+    var selectedFile = data.file;
+    
+    // If the message is from the system, display the message only
+    if (data.username === 'System') {
+        $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');
+    } else {
+        // Display the received lyrics with a play icon
         $('#messages').append(`
             <li class="chat-message">
                 <img src="${pfp_url}" class="chatpfp"> <span class="open">${username}</span>: ${lyrics}
                 <ion-icon name="play-circle-outline" class="play-icon" style="cursor:pointer;" data-file="${selectedFile}"></ion-icon>
             </li>
-        `);}
-    });
+        `);
+        
+        // Automatically play the song associated with the received lyrics
+        var filePath = '/static/music.mp3/' + selectedFile;
+        $('#audio_player').attr('src', filePath);
+        var audioPlayer = document.getElementById('audio_player');
+        audioPlayer.play().then(() => {
+            console.log('Auto-playing the song');
+        }).catch((error) => {
+            console.error('Error playing the song:', error);
+        });
+    }
+});
+
 
     // Play song when play icon is clicked
     $(document).on('click', '.play-icon', function() {
