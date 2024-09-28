@@ -8,9 +8,11 @@ $(function(){
 
     
     socket.on('message', function(data) {
+    if (data.chatroomID === chatroomID) { // Filter messages by chatroomID
+
         if (data.username==='System'){
             $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');
-        }
+        }}
     
 
     $('#send').click(function(event) {

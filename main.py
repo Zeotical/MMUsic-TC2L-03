@@ -330,7 +330,7 @@ def handle_text(data):
         print("User is not logged in")
         return
     if save_message(lyric, chatroomID, user_id):
-        emit('message', {'pfp':pfp, 'username': user_id, 'text': lyric}, room=chatroomID)#Emits the message to all connected clients
+        emit('message', {'pfp':pfp, 'username': user_id, 'text': lyric,'chatroomID':chatroomID}, room=chatroomID)#Emits the message to all connected clients
     else:
         print("Failed to save message")
         
@@ -345,7 +345,7 @@ def handle_send_lyrics(data):
     emit('receive_lyrics', {
         'username': username,
         'lyric': lyric,
-        'file': selected_file}, room=chatroomID)  # Broadcast to the chatroomID
+        'file': selected_file,'chatroomID':chatroomID}, room=chatroomID)  # Broadcast to the chatroomID
     
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
