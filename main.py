@@ -361,7 +361,7 @@ def chat(chatroomID):
         chatroom_name = chatroom[0]
         background_url = chatroom[1]
         messages = get_messages(chatroomID)   # Fetch messages safely with the fix
-        return render_template('chat.html', room_name=chatroom_name, background=background_url, messages=messages)
+        return render_template('chat.html', room_name=chatroom_name, background=background_url, messages=messages,chatroomID=chatroomID)
 
     return "Chatroom not found", 404
     
