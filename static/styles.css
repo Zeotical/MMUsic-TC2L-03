@@ -54,7 +54,7 @@ font-size: xx-large;
     display: block;   
     position: relative;
     bottom: 77px;
-    left: 750px;
+    left: 835px;
     width: 30px;
     height: 30px;
 }
@@ -263,7 +263,7 @@ form button {
 
 .card{
     width: 350px;
-    height: 555px;
+    height: 600px;
     margin: 100px auto 0;
     perspective: 1000px;
 }

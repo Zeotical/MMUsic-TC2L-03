@@ -2,6 +2,16 @@
 
 {% block body%} 
 
+{% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        
+          {% for category, message in messages %}
+            <p class="{{ category }}">{{ message }}</p>
+          {% endfor %}
+    
+      {% endif %}
+    {% endwith %}
+
 <h1>Welcome to MMUsic Chat!</h1>
 
 <div class="register">

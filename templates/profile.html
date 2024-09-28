@@ -22,11 +22,10 @@
             
             
             <h1> Music Genre:</h1>
-            {{session['genre_selected']}}
-          
+            <p>{{session['genre_selected']}}</p>
 
             {% for genre in genres %}
-              <li>{{ genre }}</li>
+              <p>{{ genre }}</p>
             {% endfor %}
 
             <h1>Bio:</h1>

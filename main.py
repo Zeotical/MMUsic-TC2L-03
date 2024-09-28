@@ -1,5 +1,5 @@
 #imports
-from flask import Flask,render_template,request,redirect, session, url_for, jsonify
+from flask import Flask,render_template,request,redirect, session, url_for, jsonify,flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import secrets
@@ -124,7 +124,11 @@ def login():
     if user and user.check_password (password):
         session["username"] = username
         return redirect(url_for("chatroom"))
+    elif user and not user.check_password (password):
+        flash('Password does not match records.', 'success')
     else:
+        flash('User is not registered, register to proceed.', 'success')
+
         return render_template("index.html")
  return render_template("login.html")  
     #check if it's in the db/login
@@ -159,8 +163,10 @@ def register():
     user = User.query.filter_by(username=username).first()
    
     if user:
+        flash('User already exists/Username taken', 'success')
         return render_template("index.html", error="User already here!")
     elif username=="" or password=="":
+        flash('Username and password cannot be empty.', 'success')
         return render_template("index.html", error="Empty ps and username!")
     else:
         new_user = User(username=username, image=image_path, password=password)
