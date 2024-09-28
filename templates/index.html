@@ -2,7 +2,17 @@
 
 {% block body%} 
 
-<h1>WElcome to MMUsic Chat</h1>
+{% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        
+          {% for category, message in messages %}
+            <p class="{{ category }}">{{ message }}</p>
+          {% endfor %}
+    
+      {% endif %}
+    {% endwith %}
+
+<h1>Welcome to MMUsic Chat!</h1>
 
 <div class="register">
   <form id="register_form" action="{{url_for("register")}}" method="post" >
@@ -20,24 +30,35 @@
   </form>
 
   <form id="form2" action="{{url_for("register")}}" method="post">
-    <h1>Music Genre Selection</h1>  
-
+  <h1>Music Genres</h1> 
 
     <div class="dropdown">
-      <button type="button" onclick="return false;">Select Your Top Music Genre</button>
+      <button class="music-btn" type="button" onclick="return false;">Select Your Top Music Genre</button>
       <div class="content">
+        <div>
         <input type="radio" id="mg1"  name="music" value="Hip hop" onclick="submitGenres()" >    
-        <label for="mg1">Hip Hop</label>   
+        <label for="mg1">Hip Hop</label>  
+        </div>
+        <div> 
         <input type="radio" id="mg2"  name="music" value="R&B" onclick="submitGenres()" >
         <label for="mg2">R&B</label>
+        </div>
+        <div>
         <input type="radio" id="mg3"  name="music" value="Rock" onclick="submitGenres()" >
         <label for="mg3">Rock</label>
+        </div>
+        <div>
         <input type="radio" id="mg4"  name="music" value="Electronic music" onclick="submitGenres()" >
         <label for="mg4">Electronic music</label>
+        </div>
+        <div>
         <input type="radio" id="mg5"  name="music" value="Pop" onclick="submitGenres()" >
         <label for="mg5">Pop</label>
+        </div>
+        <div>
         <input type="radio" id="mg6"  name="music" value="KPOP" onclick="submitGenres()" >
         <label for="mg6">KPOP</label>
+        </div>
       </div>
     </div>
 

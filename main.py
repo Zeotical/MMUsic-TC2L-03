@@ -1,14 +1,11 @@
 #imports
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify
+from flask import Flask,render_template,request,redirect, session, url_for, jsonify,flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import secrets
 import os
 from flask_socketio import SocketIO, emit, join_room
 from flask_mysqldb import MySQL
-import secrets
-
-# from flask_login import LoginManager
 
 app = Flask(__name__)
 app.secret_key="user_authentication11"
@@ -29,9 +26,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 db = SQLAlchemy(app)
 
 # Database Model # a model represents a single row in our db each user has their own model
-class User(db.Model):
+class user(db.Model):
     # Class Variables
-    __tablename__ = 'User'
+    __tablename__ = 'user'
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
     password = db.Column(db.String(15), unique=True, nullable=False)
@@ -46,17 +43,17 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-class Music_genres(db.Model):
-    __tablename__ = 'Music_genres'
+class music_genres(db.Model):
+    __tablename__ = 'music_genres'
     id = db.Column(db.Integer,primary_key=True)
-    music_genres = db.Column(db.Text, nullable=False)
+    music_genre = db.Column(db.Text, nullable=False)
 
 
-class User_genre(db.Model):
-    __tablename__ = 'User_genre'
+class user_genre(db.Model):
+    __tablename__ = 'user_genre'
     id = db.Column(db.Integer,primary_key=True)
-    user_id =  db.Column(db.Integer,db.ForeignKey('User.id'),  nullable=False)
-    genre_id =  db.Column(db.Integer,db.ForeignKey('Music_genres.id'), nullable=False)
+    user_id =  db.Column(db.Integer,db.ForeignKey('user.id'),  nullable=False)
+    genre_id =  db.Column(db.Integer,db.ForeignKey('music_genres.id'), nullable=False)
     genre_name = db.Column(db.Text, nullable=True)
 
 def validate_chatroomID(chatroomID):
@@ -120,11 +117,15 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
 
-    user = User.query.filter_by(username=username).first()
-    if user and user.check_password (password):
+    users = user.query.filter_by(username=username).first()
+    if users and users.check_password (password):
         session["username"] = username
         return redirect(url_for("chatroom"))
+    elif users and not users.check_password (password):
+        flash('Password does not match records.', 'success')
     else:
+        flash('User is not registered, register to proceed.', 'success')
+
         return render_template("index.html")
  return render_template("login.html")  
     #check if it's in the db/login
@@ -156,22 +157,24 @@ def register():
     
     genre_list = genres.split(',')  # Converts the string to a list
 
-    user = User.query.filter_by(username=username).first()
+    users = user.query.filter_by(username=username).first()
    
-    if user:
+    if users:
+        flash('User already exists/Username taken', 'success')
         return render_template("index.html", error="User already here!")
     elif username=="" or password=="":
+        flash('Username and password cannot be empty.', 'success')
         return render_template("index.html", error="Empty ps and username!")
     else:
-        new_user = User(username=username, image=image_path, password=password)
+        new_user = user(username=username, image=image_path, password=password)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
 
         for genre_name in genre_list:
-            genre = Music_genres.query.filter_by(music_genres=genre_name).first()
+            genre = music_genres.query.filter_by(music_genre=genre_name).first()
             if genre:
-                music = User_genre(genre_name=genre_name, user_id=new_user.id, genre_id=genre.id)
+                music = user_genre(genre_name=genre_name, user_id=new_user.id, genre_id=genre.id)
                 db.session.add(music)
 
         
@@ -181,73 +184,79 @@ def register():
         session["genre_selected"]= genre_list
 
         return redirect(url_for("chatroom"))
-# Dashboard
-# @app.route("/dashboard")
-# def dashboard():
-#     if "username" in session:
-#      user = User.query.filter_by(username=session["username"]).first()
 
-#      return render_template("dashboard.html", username= session["username"], user=user)
-#     return redirect(url_for("home"))
 # Logout
 @app.route("/logout")
 def logout():
     session.pop("username", None)
     return redirect(url_for("home"))
 
-
-
 # Profile info
 @app.route("/profile", methods=["GET","POST"])
 def profile():
-        # form = profile_form()
-        user = User.query.filter_by(username=session["username"]).first()   
-        id = user.id
-        update= User.query.get_or_404(id)
-        if request.method =="POST":
-            update.username = request.form["edit_username"]
-            update.password = request.form["edit_password"] 
-            update.bio = request.form["edit_bio"]
-            session["bio"] = update.bio
-            
+    users = user.query.filter_by(username=session["username"]).first()   
+    id = users.id
+    update = users.query.get_or_404(id)
+    register_genre=user_genre.query.filter_by(user_id=update.id).all()
+    genre_list = [genre.genre_name for genre in register_genre]
 
-            # Update pfp
-            if request.files["pfp-select"]:
-                image = request.files["pfp-select"]
-                
-                if image and image.filename != '':
-                    random_hex = secrets.token_hex(8)
-                    _, f_ext = os.path.splitext(image.filename)
-                    image_path = random_hex + f_ext 
-                    image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
-                    update.image = image_path
-                    session["pfp_path"] = image_path
-                    print("image saved")
-            #Update genre selection
-            if request.form.get("edit_genre"):
-                update.genres = request.form.get("edit_genre")
-                genre_list = update.genres.split(',') 
-         
-                  
-                User_genre.query.filter_by(user_id=update.id).delete()
-                for genre_name in genre_list:
-                    genre = Music_genres.query.filter_by(music_genres=genre_name).first()
-                    if genre:
-                        music = User_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
-                        db.session.add(music)
+    if request.method == "POST":
+    
+        update_username = request.form["edit_username"]
+        username_taken = user.query.filter_by(username=update_username).first()  
 
-                session["genre_selected"] = genre_list
-                update.genres=session["genre_selected"]
-            
-            else:
-                update.genres=session["genre_selected"]
+        
+        update.password= request.form["edit_password"] 
+       
+        if request.form["edit_bio"]:
+            update.bio = request.form["edit_bio"]  
+            session["bio"]= update.bio
+        
+        #Check if username is taken
+        if username_taken and username_taken.id != update.id:
+            flash('Username Taken.', 'success')
+            return render_template("profile.html", update=update, user=session["username"], error="Username already exists")  
+        update.username= update_username
+        #Update pfp
+        if request.files["pfp-select"]:
+            image = request.files["pfp-select"]
+            if image and image.filename != '':
+                random_hex = secrets.token_hex(8)
+                _, f_ext = os.path.splitext(image.filename)
+                image_path = random_hex + f_ext 
+                image.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], image_path))
+                update.image = image_path
+                session["pfp_path"] = image_path
+                print("image saved")
+
+        #Update genre selection
+        if request.form.get("edit_genre"):
+            update.genres = request.form.get("edit_genre")
+            genre_list = update.genres.split(',') 
+            user_genre.query.filter_by(user_id=update.id).delete()
+            for genre_name in genre_list:
+                genre = music_genres.query.filter_by(music_genre=genre_name).first()
+                if genre:
+                    music = user_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
+                    db.session.add(music)
+
+            session["genre_selected"] = genre_list
+            update.genres = session["genre_selected"]
+        else:
+            update.genres = session["genre_selected"]
+
+        session["username"] = update.username
+        
+        db.session.commit()
+        flash('Profile updated!', 'success')
+    return render_template("profile.html", update=update, user=session["username"],genres=genre_list)
 
 
-            session["username"] = update.username
-            db.session.commit()
-        update.genres=session["genre_selected"]
+        #     session["username"] = update.username
+        #     db.session.commit()
+        # update.genres=session["genre_selected"]
 
-        return render_template("profile.html" , update=update, user=session["username"]) 
+        # return render_template("profile.html" , update=update, user=session["username"]) 
 
         # return redirect(url_for("home"))
 
@@ -345,15 +354,38 @@ def handle_send_lyrics(data):
 def livesearch():
     search_text = request.form.get('query', '')
     cursor = mysql.connection.cursor()
-    if search_text:
-        query = """
-        SELECT performer, title, lyric, source FROM songs 
-        WHERE performer LIKE %s OR title LIKE %s OR lyric LIKE %s
-        ORDER BY title ASC LIMIT 10
-        """
-        search_pattern = f"%{search_text}%"
-        cursor.execute(query, (search_pattern, search_pattern, search_pattern))
-        search_results = cursor.fetchall()
+
+    # Get the user's selected genres from session (it's a list of genre names)
+    genre_selected = session.get('genre_selected')
+
+    if search_text and genre_selected:
+        # Convert genre names to genre IDs
+        cursor.execute("SELECT id FROM music_genres WHERE music_genre IN %s", (tuple(genre_selected),))
+        genre_ids = cursor.fetchall()
+
+        if genre_ids:
+            # Extract genre IDs from the query result
+            genre_ids = [genre[0] for genre in genre_ids]  # Convert tuples to list of IDs
+
+            # Construct a query with placeholders for the genres
+            query = """
+            SELECT performer, title, lyric, source 
+            FROM songs 
+            WHERE (performer LIKE %s OR title LIKE %s OR lyric LIKE %s)
+            ORDER BY
+              CASE
+                WHEN genre_id IN %s THEN 1  -- Put selected genres at the top
+                ELSE 2  -- Non-selected genres go at the bottom
+              END,
+              title ASC  -- Sort alphabetically within each group
+            LIMIT 10
+            """
+            
+            search_pattern = f"%{search_text}%"
+            cursor.execute(query, (search_pattern, search_pattern, search_pattern, tuple(genre_ids)))
+            search_results = cursor.fetchall()
+        else:
+            search_results = []
     else:
         search_results = []
     cursor.close()
