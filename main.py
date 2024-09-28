@@ -20,6 +20,50 @@ mysql = MySQL(app)
 app.config['SECRET_KEY'] = 'chatroom1234'
 socketio = SocketIO(app)
 
+def validate_chatroomID(chatroomID):
+    try: 
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT chatroomID FROM chatroom WHERE chatroomID = %s", (chatroomID,))
+        result = cur.fetchone()
+        print(f"Query result: {result}")
+        mysql.connection.commit()
+        cur.close()
+        if result:  # Check if a result was returned
+            return True  # Chatroom exists
+        else:
+            return False
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
+
+def save_message(content, chatroomID, user_id):
+    if validate_chatroomID(chatroomID):
+        try:
+            cur = mysql.connection.cursor()
+            print(f"Inserting message: {content}, ChatroomID: {chatroomID}, UserID: {user_id}")
+            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", (content, chatroomID, user_id))
+            mysql.connection.commit()
+            cur.close()
+            return True
+        except Exception as e:
+            print(f"Database error while saving message: {e}")
+            return False
+    else:
+        print(f"Error: ChatroomID {chatroomID} does not exist")
+        return False
+
+def get_messages(chatroomID):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
+        messages = cur.fetchall()
+        mysql.connection.commit()
+        cur.close()
+        return messages
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
+
 # Configure SQL Alchmey
 app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/chat?unix_socket=/opt/lampp/var/mysql/mysql.sock"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
@@ -314,16 +358,16 @@ def chat(chatroomID):
     cur.close()
 
     if chatroom:
-        chatroom_name = chatroom['chatroom_name'] if isinstance(chatroom, dict) else chatroom[0]
-        background_url = chatroom['background_url'] if isinstance(chatroom, dict) else chatroom[1]
-        # Render chatroom template with the correct background
-        messages = get_messages(chatroomID)
-        return render_template('chat.html', room_name=chatroom_name, background=background_url, user_id=user_id, messages=messages, chatroomID=chatroomID)
-    
+        chatroom_name = chatroom[0]
+        background_url = chatroom[1]
+        messages = get_messages(chatroomID)  # Fetch messages safely with the fix
+        return render_template('chat.html', room_name=chatroom_name, background=background_url, user_id=user_id, messages=messages)
+
     return "Chatroom not found", 404
     
     # messages = get_messages(chatroomID)
     # return render_template('chat.html', messages=messages, chatroomID=chatroomID, user_id=user_id, background_url=background_url)
+
 
 
 
