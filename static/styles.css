@@ -104,6 +104,18 @@ form button {
     cursor: pointer;
 }
 
+.music-btn{
+    display: block; 
+    margin: 0 auto;
+    width: 310px;
+    height: 35px;
+    background: linear-gradient(to right,#ff105f,#ffad06);
+    border-radius: 30px;
+    border: 0;
+    outline: none;
+    color:#fff;
+    cursor: pointer;
+}
 
 #form2{
     left: 450px;
@@ -189,9 +201,10 @@ form button {
 .dropdown .content{
     display: none;
     position: absolute;
-    background-color: hsl(0, 0%, 95%);
-    min-width: 100px;
+    background-color: rgb(252, 247, 247);
+    min-width: 300px;
     box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.8);
+    text-align: center;
 }
 .dropdown:hover .content{
     display: block;
@@ -204,8 +217,6 @@ form button {
 }
 
 /* PROFILE PAGE */
-
-/* #profile_info */
 
 
 #visibility {
@@ -241,11 +252,7 @@ form button {
 
 }
 
-/* {
-    text-align: justify;
-} */
 
-/* T */
 
 .contain{
     width:100%;
@@ -291,10 +298,10 @@ form button {
     backface-visibility: hidden;
 
 }
-.back button{
+/* .back button{
     display: inline;
     text-align: center;
-}
+} */
 
 
 .card:hover .card-inner{
