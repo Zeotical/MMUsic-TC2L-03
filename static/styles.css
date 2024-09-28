@@ -7,7 +7,13 @@ text-align: center;
 }
 
 body {
-    background-color: beige;
+    
+    background-image: url('https://media.giphy.com/media/lqxxKmzFXFDyw/giphy.gif');
+    background-size: cover; 
+    background-repeat: no-repeat; 
+    background-position: center center; 
+    height: 100vh; 
+    width: 100%; 
 }
 
 .input-field {
@@ -25,7 +31,7 @@ text-align: center;
 font-size: xx-large;
 }
 
-.btn-register, .btn-login , .lnk-login{
+.btn-register, .lnk-login{
     display: block;
     width:100%;
     margin: 0 auto;
@@ -48,15 +54,15 @@ font-size: xx-large;
     display: block;   
     position: relative;
     bottom: 77px;
-    left: 830px;
+    left: 835px;
     width: 30px;
     height: 30px;
 }
 
 .register { 
     width: 360px;
-    height: 600px;
-    background: #fff; 
+    height: 630px;
+    background: #ffffff; 
     margin: 8% auto;
     border-radius: 5px;
     position: relative;
@@ -98,9 +104,23 @@ form button {
     cursor: pointer;
 }
 
+.music-btn{
+    display: block; 
+    margin: 0 auto;
+    width: 310px;
+    height: 35px;
+    background: linear-gradient(to right,#ff105f,#ffad06);
+    border-radius: 30px;
+    border: 0;
+    outline: none;
+    color:#fff;
+    cursor: pointer;
+}
 
 #form2{
     left: 450px;
+    width: 360px;
+    height: 430px;
 }
 
 
@@ -160,6 +180,8 @@ form button {
     display: none;
 }
 
+/* DROPDOWN */
+
 .dropdown{
     display: inline-block;
 }
@@ -179,9 +201,10 @@ form button {
 .dropdown .content{
     display: none;
     position: absolute;
-    background-color: hsl(0, 0%, 95%);
-    min-width: 100px;
+    background-color: rgb(252, 247, 247);
+    min-width: 300px;
     box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.8);
+    text-align: center;
 }
 .dropdown:hover .content{
     display: block;
@@ -193,4 +216,94 @@ form button {
     background-color: hsl(0, 0%, 90%);
 }
 
+/* PROFILE PAGE */
 
+
+#visibility {
+    display: block;   
+    position: relative;
+    bottom: 80px;
+    right: -245px;
+    width: 35px;
+    height: 35px;
+}
+
+.profile_container{
+
+    text-align: center;
+    font-size: larger;
+    text-size-adjust: 700px;
+}
+
+
+#s_username{
+    font-size: larger;
+    
+}
+
+.btn-edit ,.btn-login{
+    display: block;
+    width:140px;
+    margin: 0 auto;
+    font-size: xx-large;
+    border-radius: 10px;
+    cursor: pointer;
+    background: transparent;
+
+}
+
+
+
+.contain{
+    width:100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e3dbf6, #a99bf9 );
+    padding: 10px;
+}
+
+.card{
+    width: 350px;
+    height: 600px;
+    margin: 100px auto 0;
+    perspective: 1000px;
+}
+
+.card-inner{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+}
+
+.front {
+    width:100%;
+    height:100%;
+    border-radius: 15px;
+    position:absolute;
+    background: #fff;
+    text-align: center;
+    backface-visibility: hidden;
+}
+
+
+.back{
+    background: #fff;
+    padding: 20px 40px;
+    transform: rotateY(180deg);
+    width:100%;
+    height:180%;
+    border-radius: 15px;
+    position:absolute;
+    backface-visibility: hidden;
+
+}
+/* .back button{
+    display: inline;
+    text-align: center;
+} */
+
+
+.card:hover .card-inner{
+    transform: rotateY(180deg);
+}

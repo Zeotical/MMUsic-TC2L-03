@@ -34,9 +34,26 @@
         <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic</strong></h1>
     </div>
 </div>
-<h2 style="text-align: center; margin-top: 10px; margin-bottom: 10px">Your Chatrooms</h2>
-<a href="{{url_for("logout" )}}" class="btn btn-logout">Logout</a>
-<a href="{{ url_for("profile" )}}"">Profile</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">MMUsic</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="list-group list-group-horizontal list-unstyled">
+            <li class="active">
+                <a class="nav-link" href="http://127.0.0.1:5000/chatroom">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for("profile" )}}">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for("logout" )}}">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<h2 style="text-align: center; margin-top: 10px; margin-bottom: 10px">Chatrooms</h2>
 
 <div class="container">
     <div class="row">
