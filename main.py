@@ -55,7 +55,7 @@ class user_genre(db.Model):
     user_id =  db.Column(db.Integer,db.ForeignKey('user.id'),  nullable=False)
     genre_id =  db.Column(db.Integer,db.ForeignKey('music_genres.id'), nullable=False)
     genre_name = db.Column(db.Text, nullable=True)
-
+    
 def validate_chatroomID(chatroomID):
     print(f"Validating chatroomID: {chatroomID}")
     try: 
@@ -288,7 +288,6 @@ def chat(chatroomID):
 
     user_id = session['user_id']
     if request.method == 'POST':
-        # Get the content of the new message from the form (assuming the form has an input with name='content')
         content = request.form.get('content')
         if content:
             if save_message(content, chatroomID, user_id):
@@ -299,11 +298,8 @@ def chat(chatroomID):
     cur = mysql.connection.cursor()
     cur.execute("SELECT chatroom_name, background_url FROM chatroom WHERE chatroomID = %s", (chatroomID,))
     chatroom = cur.fetchone()
-    mysql.connection.commit()
     cur.close()
-    
-    print(f"Chatroom fetched: {chatroom}")
-    
+
     if chatroom:
         chatroom_name = chatroom['chatroom_name'] if isinstance(chatroom, dict) else chatroom[0]
         background_url = chatroom['background_url'] if isinstance(chatroom, dict) else chatroom[1]
@@ -315,6 +311,7 @@ def chat(chatroomID):
     
     # messages = get_messages(chatroomID)
     # return render_template('chat.html', messages=messages, chatroomID=chatroomID, user_id=user_id, background_url=background_url)
+
 
 
 @socketio.on('joined')
@@ -355,41 +352,40 @@ def livesearch():
     search_text = request.form.get('query', '')
     cursor = mysql.connection.cursor()
 
-    # Get the user's selected genres from session (it's a list of genre names)
     genre_selected = session.get('genre_selected')
 
     if search_text and genre_selected:
-        # Convert genre names to genre IDs
         cursor.execute("SELECT id FROM music_genres WHERE music_genre IN %s", (tuple(genre_selected),))
         genre_ids = cursor.fetchall()
 
         if genre_ids:
-            # Extract genre IDs from the query result
-            genre_ids = [genre[0] for genre in genre_ids]  # Convert tuples to list of IDs
+            genre_ids = [genre[0] for genre in genre_ids]
 
-            # Construct a query with placeholders for the genres
             query = """
             SELECT performer, title, lyric, source 
             FROM songs 
             WHERE (performer LIKE %s OR title LIKE %s OR lyric LIKE %s)
             ORDER BY
               CASE
-                WHEN genre_id IN %s THEN 1  -- Put selected genres at the top
-                ELSE 2  -- Non-selected genres go at the bottom
+                WHEN genre_id IN %s THEN 1
+                ELSE 2
               END,
-              title ASC  -- Sort alphabetically within each group
+              title ASC
             LIMIT 10
             """
             
             search_pattern = f"%{search_text}%"
             cursor.execute(query, (search_pattern, search_pattern, search_pattern, tuple(genre_ids)))
-            search_results = cursor.fetchall()
+            search_results = cursor.fetchall() or []  # Return an empty list if no results are found
         else:
             search_results = []
     else:
         search_results = []
     cursor.close()
+
     return jsonify(search_results)
+
+
 
 if __name__ =="__main__":
     with app.app_context():
