@@ -1,6 +1,7 @@
 $(document).ready(function() {
     var socket = io.connect('http://' + location.hostname + ':' + location.port);
-    var chatroomID = '{{ chatroomID }}'; // Ensure this matches across windows
+    var chatroomID = document.getElementById('hiddenChatroomID').value;
+
     // Join the chatroom on connect
     socket.on('connect', function() {
         socket.emit('joined', { chatroomID: chatroomID });
@@ -51,7 +52,9 @@ $(document).ready(function() {
         });
 
         // Emit selected lyrics to server
-        socket.emit('selected-lyrics', { lyric: lyrics, file: selectedFile, chatroomID: chatroomID });
+        console.log("Emitting to chatroomID:", chatroomID);
+
+        socket.emit('selected-lyrics', { lyric: lyrics, file: selectedFile ,chatroomID:chatroomID});
 
         // Clear the search box after selecting the lyric
         $('#text').val('');

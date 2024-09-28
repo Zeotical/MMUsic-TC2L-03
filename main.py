@@ -371,21 +371,23 @@ def chat(chatroomID):
 
 
 
+
 @socketio.on('joined')
 def handle_joined(data):
     chatroomID = data['chatroomID']
     join_room(chatroomID)
-    emit('message', {'username': 'System', 'text': 'Welcome to Chatroom'}, room=chatroomID) #send Welcome to Chatroom to all the connected clients.
-    
+    print(f"User joined chatroom: {chatroomID}")  # Debugging log
+
+    emit('message', {'username': 'System', 'text': 'Welcome to Chatroom'}, room=chatroomID)
+
 @socketio.on('text')
 def handle_text(data):
     chatroomID = data['chatroomID']
     text = data['lyric']
     chatroomID = data['chatroomID']
     username = session['username']
-    
+    print(f"Received message for chatroom {chatroomID}: {data['text']}")
 
-   
     # Store the message in the database
     add_text(chatroomID, text)
     
@@ -398,14 +400,18 @@ def handle_text(data):
     
 @socketio.on('selected-lyrics')
 def handle_selected_lyrics(data):
+
     pfp= session['pfp_path'] 
+    chatroomID= data['chatroomID']
+    print(f"Received message for chatroom {chatroomID}: {data['lyric']}")
+
 
     emit('message', {
         'username': session['username'],
         'lyric': data['lyric'],
         'file': data['file'],
         'pfp': pfp # Assuming you have a function to get the profile picture URL
-    }, broadcast=True)
+    }, room=chatroomID)
 
 def get_user_id(username):
     try: 
