@@ -342,10 +342,10 @@ def handle_send_lyrics(data):
     username = data['username']
 
     # Broadcast the message to everyone in the same chatroom
-    emit('receive_lyrics', {
+    socketio.emit('receive_lyrics', {
         'username': username,
         'lyric': lyric,
-        'file': selected_file}, room=chatroomID)  # Broadcast to the chatroomID
+        'file': selected_file}, room=chatroomID, broadcast=True)  # Broadcast to the chatroomID
     
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
