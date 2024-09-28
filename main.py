@@ -60,12 +60,12 @@ def get_messages(chatroomID):
         cur = mysql.connection.cursor()
         cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
         messages = cur.fetchall()
-        mysql.connection.commit()
         cur.close()
-        return messages
+        return messages if messages else []  # Return an empty list if no messages are found
     except Exception as e:
         print(f"Database error: {e}")
-        return False
+        return []
+
 
 # Configure SQL Alchmey
 app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/chat?unix_socket=/opt/lampp/var/mysql/mysql.sock"
@@ -73,9 +73,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]= False
 db = SQLAlchemy(app)
 
 # Database Model # a model represents a single row in our db each user has their own model
-class User(db.Model):
+class user(db.Model):
     # Class Variables
-    __tablename__ = 'User'
+    __tablename__ = 'user'
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
     password = db.Column(db.String(15), nullable=False)
@@ -90,17 +90,17 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-class Music_genres(db.Model):
-    __tablename__ = 'Music_genres'
+class music_genres(db.Model):
+    __tablename__ = 'music_genres'
     id = db.Column(db.Integer,primary_key=True)
-    music_genres = db.Column(db.Text, nullable=False)
+    music_genre = db.Column(db.Text, nullable=False)
 
 
-class User_genre(db.Model):
-    __tablename__ = 'User_genre'
+class user_genre(db.Model):
+    __tablename__ = 'user_genre'
     id = db.Column(db.Integer,primary_key=True)
-    user_id =  db.Column(db.Integer,db.ForeignKey('User.id'),  nullable=False)
-    genre_id =  db.Column(db.Integer,db.ForeignKey('Music_genres.id'), nullable=False)
+    user_id =  db.Column(db.Integer,db.ForeignKey('user.id'),  nullable=False)
+    genre_id =  db.Column(db.Integer,db.ForeignKey('music_genres.id'), nullable=False)
     genre_name = db.Column(db.Text, nullable=True)
 
 
@@ -120,11 +120,11 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
 
-    user = User.query.filter_by(username=username).first()
-    if user and user.check_password (password):
+    users = user.query.filter_by(username=username).first()
+    if users and users.check_password (password):
         session["username"] = username
         return redirect(url_for("chatroom"))
-    elif user and not user.check_password (password):
+    elif users and not users.check_password (password):
         flash('Password does not match records.', 'success')
     else:
         flash('User is not registered, register to proceed.', 'success')
@@ -160,24 +160,24 @@ def register():
     
     genre_list = genres.split(',')  # Converts the string to a list
 
-    user = User.query.filter_by(username=username).first()
+    users = user.query.filter_by(username=username).first()
    
-    if user:
+    if users:
         flash('User already exists/Username taken', 'success')
         return render_template("index.html", error="User already here!")
     elif username=="" or password=="":
         flash('Username and password cannot be empty.', 'success')
         return render_template("index.html", error="Empty ps and username!")
     else:
-        new_user = User(username=username, image=image_path, password=password)
+        new_user = user(username=username, image=image_path, password=password)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
 
         for genre_name in genre_list:
-            genre = Music_genres.query.filter_by(music_genres=genre_name).first()
+            genre = music_genres.query.filter_by(music_genre=genre_name).first()
             if genre:
-                music = User_genre(genre_name=genre_name, user_id=new_user.id, genre_id=genre.id)
+                music = user_genre(genre_name=genre_name, user_id=new_user.id, genre_id=genre.id)
                 db.session.add(music)
 
         
@@ -197,16 +197,16 @@ def logout():
 # Profile info
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
-    user = User.query.filter_by(username=session["username"]).first()   
-    id = user.id
-    update = User.query.get_or_404(id)
-    register_genre=User_genre.query.filter_by(user_id=update.id).all()
+    users = user.query.filter_by(username=session["username"]).first()   
+    id = users.id
+    update = users.query.get_or_404(id)
+    register_genre=user_genre.query.filter_by(user_id=update.id).all()
     genre_list = [genre.genre_name for genre in register_genre]
 
     if request.method == "POST":
     
         update_username = request.form["edit_username"]
-        username_taken = User.query.filter_by(username=update_username).first()  
+        username_taken = user.query.filter_by(username=update_username).first()  
 
         
         update.password= request.form["edit_password"] 
@@ -217,6 +217,7 @@ def profile():
         
         #Check if username is taken
         if username_taken and username_taken.id != update.id:
+            flash('Username Taken.', 'success')
             return render_template("profile.html", update=update, user=session["username"], error="Username already exists")  
         update.username= update_username
         #Update pfp
@@ -235,11 +236,11 @@ def profile():
         if request.form.get("edit_genre"):
             update.genres = request.form.get("edit_genre")
             genre_list = update.genres.split(',') 
-            User_genre.query.filter_by(user_id=update.id).delete()
+            user_genre.query.filter_by(user_id=update.id).delete()
             for genre_name in genre_list:
-                genre = Music_genres.query.filter_by(music_genres=genre_name).first()
+                genre = music_genres.query.filter_by(music_genre=genre_name).first()
                 if genre:
-                    music = User_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
+                    music = user_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
                     db.session.add(music)
 
             session["genre_selected"] = genre_list
@@ -250,7 +251,7 @@ def profile():
         session["username"] = update.username
         
         db.session.commit()
-
+        flash('Profile updated!', 'success')
     return render_template("profile.html", update=update, user=session["username"],genres=genre_list)
 
 
@@ -279,7 +280,6 @@ def chat(chatroomID):
 
     user_id = session['user_id']
     if request.method == 'POST':
-        # Get the content of the new message from the form (assuming the form has an input with name='content')
         content = request.form.get('content')
         if content:
             if save_message(content, chatroomID, user_id):
@@ -290,19 +290,16 @@ def chat(chatroomID):
     cur = mysql.connection.cursor()
     cur.execute("SELECT chatroom_name, background_url FROM chatroom WHERE chatroomID = %s", (chatroomID,))
     chatroom = cur.fetchone()
-    mysql.connection.commit()
     cur.close()
-    
-    print(f"Chatroom fetched: {chatroom}")
-    
+
     if chatroom:
-        chatroom_name = chatroom['chatroom_name'] if isinstance(chatroom, dict) else chatroom[0]
-        background_url = chatroom['background_url'] if isinstance(chatroom, dict) else chatroom[1]
-        # Render chatroom template with the correct background
-        messages = get_messages(chatroomID)
+        chatroom_name = chatroom[0]
+        background_url = chatroom[1]
+        messages = get_messages(chatroomID)  # Fetch messages safely with the fix
         return render_template('chat.html', room_name=chatroom_name, background=background_url, user_id=user_id, messages=messages)
-    
+
     return "Chatroom not found", 404
+
 
 
 @socketio.on('joined')
@@ -326,35 +323,31 @@ def livesearch():
     search_text = request.form.get('query', '')
     cursor = mysql.connection.cursor()
 
-    # Get the user's selected genres from session (it's a list of genre names)
     genre_selected = session.get('genre_selected')
 
     if search_text and genre_selected:
-        # Convert genre names to genre IDs
-        cursor.execute("SELECT id FROM music_genres WHERE music_genres IN %s", (tuple(genre_selected),))
+        cursor.execute("SELECT id FROM music_genres WHERE music_genre IN %s", (tuple(genre_selected),))
         genre_ids = cursor.fetchall()
 
         if genre_ids:
-            # Extract genre IDs from the query result
-            genre_ids = [genre[0] for genre in genre_ids]  # Convert tuples to list of IDs
+            genre_ids = [genre[0] for genre in genre_ids]
 
-            # Construct a query with placeholders for the genres
             query = """
             SELECT performer, title, lyric, source 
             FROM songs 
             WHERE (performer LIKE %s OR title LIKE %s OR lyric LIKE %s)
             ORDER BY
               CASE
-                WHEN genre_id IN %s THEN 1  -- Put selected genres at the top
-                ELSE 2  -- Non-selected genres go at the bottom
+                WHEN genre_id IN %s THEN 1
+                ELSE 2
               END,
-              title ASC  -- Sort alphabetically within each group
+              title ASC
             LIMIT 10
             """
             
             search_pattern = f"%{search_text}%"
             cursor.execute(query, (search_pattern, search_pattern, search_pattern, tuple(genre_ids)))
-            search_results = cursor.fetchall()
+            search_results = cursor.fetchall() or []  # Return an empty list if no results are found
         else:
             search_results = []
     else:
@@ -362,7 +355,6 @@ def livesearch():
 
     cursor.close()
 
-    # Return the results as JSON
     return jsonify(search_results)
 
 
