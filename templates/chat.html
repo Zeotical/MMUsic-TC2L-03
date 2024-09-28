@@ -204,7 +204,7 @@ body {
      <div id="modal">
        <h1>Username: {{session["username"]}} </h1> 
        <img src="{{url_for('static', filename='profile_pics/' + session['pfp_path'])}}" class="chatpfp" />
-       <h1>Music genres:{{session['genre_selected']}}</h1>
+       <h1>Music genres: {{session['genre_selected']}}</h1>
        <h1>Bio: {{session["bio"]}}</h1>
        <button id="close">
         close me
