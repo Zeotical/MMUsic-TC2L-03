@@ -10,13 +10,10 @@ from flask_mysqldb import MySQL
 app = Flask(__name__)
 app.secret_key="user_authentication11"
 app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
-app.secret_key="user_authentication11"
-app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'chat'
-app.config['MYSQL_UNIX_SOCKET'] = '/opt/lampp/var/mysql/mysql.sock'
 app.config['MYSQL_UNIX_SOCKET'] = '/opt/lampp/var/mysql/mysql.sock'
 
 mysql = MySQL(app)
@@ -60,12 +57,12 @@ def get_messages(chatroomID):
         cur = mysql.connection.cursor()
         cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
         messages = cur.fetchall()
+        mysql.connection.commit()
         cur.close()
-        return messages if messages else []  # Return an empty list if no messages are found
+        return messages
     except Exception as e:
         print(f"Database error: {e}")
-        return []
-
+        return False
 
 # Configure SQL Alchmey
 app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/chat?unix_socket=/opt/lampp/var/mysql/mysql.sock"
@@ -78,7 +75,7 @@ class user(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
-    password = db.Column(db.String(15), nullable=False)
+    password = db.Column(db.String(15), unique=True, nullable=False)
     password_hash = db.Column(db.String(1512), nullable=False)
     image = db.Column(db.String(2000) , nullable=True, default='default.svg')
     bio = db.Column(db.String(150), nullable=True)
@@ -102,7 +99,51 @@ class user_genre(db.Model):
     user_id =  db.Column(db.Integer,db.ForeignKey('user.id'),  nullable=False)
     genre_id =  db.Column(db.Integer,db.ForeignKey('music_genres.id'), nullable=False)
     genre_name = db.Column(db.Text, nullable=True)
+    
+def validate_chatroomID(chatroomID):
+    print(f"Validating chatroomID: {chatroomID}")
+    try: 
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM chatroom WHERE chatroomID = %s", (chatroomID,))
+        result = cur.fetchone()
+        print(f"Query result: {result}")
+        cur.close()
+        return bool(result)
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
+    
+def save_message(lyric, chatroomID, user_id):
+    try: 
+        with mysql.connection.cursor() as cur:
+            # First, validate the chatroomID
+            cur.execute("SELECT chatroomID FROM chatroom", (chatroomID,))
+            if not cur.fetchone():
+                print(f"Error: ChatroomID {chatroomID} does not exist")
+                return False
 
+            # If valid, insert the message
+            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", 
+                        (lyric, chatroomID, user_id))
+            mysql.connection.commit()
+            print(f"Message saved successfully: {lyric}, ChatroomID: {chatroomID}, UserID: {user_id}")
+            return True
+    except Exception as e:
+        print(f"Database error while saving message: {e}")
+        mysql.connection.rollback()  # Rollback the transaction on error
+        return False
+    
+def get_messages(chatroomID):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
+        messages = cur.fetchall()
+        mysql.connection.commit()
+        cur.close()
+        return messages
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
 
 #Routes
 @app.route("/")
@@ -195,7 +236,7 @@ def logout():
     return redirect(url_for("home"))
 
 # Profile info
-@app.route("/profile", methods=["GET", "POST"])
+@app.route("/profile", methods=["GET","POST"])
 def profile():
     users = user.query.filter_by(username=session["username"]).first()   
     id = users.id
@@ -255,9 +296,32 @@ def profile():
     return render_template("profile.html", update=update, user=session["username"],genres=genre_list)
 
 
-@app.route('/chatroom', methods=['GET', 'POST'])
+        #     session["username"] = update.username
+        #     db.session.commit()
+        # update.genres=session["genre_selected"]
+
+        # return render_template("profile.html" , update=update, user=session["username"]) 
+
+        # return redirect(url_for("home"))
+
+def add_text(chatroomID, content):
+    try:
+        print(f"Attempting to insert message: '{content}' into chatroom: {chatroomID}")
+        query = "INSERT INTO messages (chatroomID, content) VALUES (%s, %s)" #insert typed messages to database(chat) table(messages) column(content)
+        cur = mysql.connection.cursor()
+        cur.execute(query, (chatroomID, content))
+        mysql.connection.commit()
+        print("Message successfully added.")
+    except Exception as e:
+        print(f"Error saving message to database: {e}")
+    finally:
+        cur.close()
+
+@app.route('/chats', methods=['GET', 'POST'])
 def chatroom():
-    
+    if 'user_id' not in session:
+        session['user_id'] = secrets.token_hex(16)
+        
     cur = mysql.connection.cursor()
     if request.method == 'POST':
         selected_genre = request.form.get('genre')
@@ -266,8 +330,9 @@ def chatroom():
         mysql.connection.commit()
         cur.close()
         if chatroom:
-            return redirect(url_for('chatroom', chatroomID=chatroom['chatroomID']))
-    cur.execute('SELECT chatroom_name FROM chatroom')
+            chatroomID, background_url = chatroom
+            return redirect(url_for('chat', chatroomID=chatroomID, background=background_url))
+    cur.execute('SELECT chatroomID, chatroom_name FROM chatroom')
     genres = cur.fetchall()
     mysql.connection.commit()
     cur.close()
@@ -293,12 +358,17 @@ def chat(chatroomID):
     cur.close()
 
     if chatroom:
-        chatroom_name = chatroom[0]
-        background_url = chatroom[1]
-        messages = get_messages(chatroomID)  # Fetch messages safely with the fix
+        chatroom_name = chatroom['chatroom_name'] if isinstance(chatroom, dict) else chatroom[0]
+        background_url = chatroom['background_url'] if isinstance(chatroom, dict) else chatroom[1]
+        # Render chatroom template with the correct background
+        messages = get_messages(chatroomID)
         return render_template('chat.html', room_name=chatroom_name, background=background_url, user_id=user_id, messages=messages)
-
+    
     return "Chatroom not found", 404
+    
+    # messages = get_messages(chatroomID)
+    # return render_template('chat.html', messages=messages, chatroomID=chatroomID, user_id=user_id, background_url=background_url)
+
 
 
 
@@ -310,14 +380,32 @@ def handle_joined(data):
     
 @socketio.on('text')
 def handle_text(data):
-    text = data['text'] #Extracts the message text from the received data
+    text = data['lyrics']
     chatroomID = data['chatroomID']
-    username = session["username"]
-    pfp = session["pfp_path"]
+    username = session['username']
     
-    save_message(text, chatroomID, username) #Calls add_text() to save the message to the database
-    emit('message', {'pfp':pfp,'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
+    # Store the message in the database
+    add_text(chatroomID, text)
     
+    # Emit the message to all users in the chatroom
+    emit('message', {
+        'username': username,
+        'lyric': text,  # Assuming you're treating all text as lyrics here
+        'file': 'filename.mp3'  # Change this according to your logic
+    }, room=chatroomID)
+    
+@socketio.on('selected-lyrics')
+def handle_selected_lyrics(data):
+    pfp= session['pfp_path'] 
+
+    emit('message', {
+        'username': session['username'],
+        'lyric': data['lyric'],
+        'file': data['file'],
+        'pfp': pfp # Assuming you have a function to get the profile picture URL
+    }, broadcast=True)
+
+
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
     search_text = request.form.get('query', '')
@@ -352,10 +440,10 @@ def livesearch():
             search_results = []
     else:
         search_results = []
-
     cursor.close()
 
     return jsonify(search_results)
+
 
 
 if __name__ =="__main__":
