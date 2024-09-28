@@ -335,7 +335,7 @@ def handle_joined(data):
     
 @socketio.on('text')
 def handle_text(data):
-    text = data['lyrics']
+    text = data['lyric']
     chatroomID = data['chatroomID']
     username = session['username']
     
