@@ -6,6 +6,7 @@ $(function(){
         socket.emit('joined', {chatroomID: chatroomID}); //This notifies the server that a new user has joined the chat
     });
 
+    
     socket.on('message', function(data) {
         if (data.username==='System'){
             $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');

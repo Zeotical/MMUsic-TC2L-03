@@ -1,20 +1,16 @@
 #imports
-from flask import Flask,render_template,request,redirect, session, url_for, jsonify
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import secrets
 import os
 from flask_socketio import SocketIO, emit, join_room
 from flask_mysqldb import MySQL
-from sqlalchemy import exc 
-from sqlalchemy.exc import IntegrityError
-
+import secrets
 
 # from flask_login import LoginManager
 
 app = Flask(__name__)
-app.secret_key="user_authentication11"
-app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
 app.secret_key="user_authentication11"
 app.config['UPLOAD_FOLDER'] = 'static/profile_pics'
 app.config['MYSQL_HOST'] = 'localhost'
@@ -22,55 +18,10 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'chat'
 app.config['MYSQL_UNIX_SOCKET'] = '/opt/lampp/var/mysql/mysql.sock'
-app.config['MYSQL_UNIX_SOCKET'] = '/opt/lampp/var/mysql/mysql.sock'
 
 mysql = MySQL(app)
 app.config['SECRET_KEY'] = 'chatroom1234'
 socketio = SocketIO(app)
-
-def validate_chatroomID(chatroomID):
-    try: 
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT chatroomID FROM chatroom WHERE chatroomID = %s", (chatroomID,))
-        result = cur.fetchone()
-        print(f"Query result: {result}")
-        mysql.connection.commit()
-        cur.close()
-        if result:  # Check if a result was returned
-            return True  # Chatroom exists
-        else:
-            return False
-    except Exception as e:
-        print(f"Database error: {e}")
-        return False
-
-def save_message(content, chatroomID, user_id):
-    if validate_chatroomID(chatroomID):
-        try:
-            cur = mysql.connection.cursor()
-            print(f"Inserting message: {content}, ChatroomID: {chatroomID}, UserID: {user_id}")
-            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", (content, chatroomID, user_id))
-            mysql.connection.commit()
-            cur.close()
-            return True
-        except Exception as e:
-            print(f"Database error while saving message: {e}")
-            return False
-    else:
-        print(f"Error: ChatroomID {chatroomID} does not exist")
-        return False
-
-def get_messages(chatroomID):
-    try:
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
-        messages = cur.fetchall()
-        mysql.connection.commit()
-        cur.close()
-        return messages
-    except Exception as e:
-        print(f"Database error: {e}")
-        return False
 
 # Configure SQL Alchmey
 app.config["SQLALCHEMY_DATABASE_URI"]= "mysql://root:@localhost/chat?unix_socket=/opt/lampp/var/mysql/mysql.sock"
@@ -83,7 +34,7 @@ class User(db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
-    password = db.Column(db.String(15), nullable=False)
+    password = db.Column(db.String(15), unique=True, nullable=False)
     password_hash = db.Column(db.String(1512), nullable=False)
     image = db.Column(db.String(2000) , nullable=True, default='default.svg')
     bio = db.Column(db.String(150), nullable=True)
@@ -203,64 +154,108 @@ def logout():
 
 
 # Profile info
-@app.route("/profile", methods=["GET", "POST"])
+@app.route("/profile", methods=["GET","POST"])
 def profile():
-    user = User.query.filter_by(username=session["username"]).first()   
-    id = user.id
-    update = User.query.get_or_404(id)
+        # form = profile_form()
+        user = User.query.filter_by(username=session["username"]).first()   
+        id = user.id
+        update= User.query.get_or_404(id)
+        if request.method =="POST":
+            update.username = request.form["edit_username"]
+            update.password = request.form["edit_password"] 
+            update.bio = request.form["edit_bio"]
+            session["bio"] = update.bio
+            
 
-    if request.method == "POST":
+            # Update pfp
+            if request.files["pfp-select"]:
+                image = request.files["pfp-select"]
+                
+                if image and image.filename != '':
+                    random_hex = secrets.token_hex(8)
+                    _, f_ext = os.path.splitext(image.filename)
+                    image_path = random_hex + f_ext 
+                    image.save(os.path.join(app.root_path,  app.config['UPLOAD_FOLDER'], image_path))
+                    update.image = image_path
+                    session["pfp_path"] = image_path
+                    print("image saved")
+            #Update genre selection
+            if request.form.get("edit_genre"):
+                update.genres = request.form.get("edit_genre")
+                genre_list = update.genres.split(',') 
+         
+                  
+                User_genre.query.filter_by(user_id=update.id).delete()
+                for genre_name in genre_list:
+                    genre = Music_genres.query.filter_by(music_genres=genre_name).first()
+                    if genre:
+                        music = User_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
+                        db.session.add(music)
+
+                session["genre_selected"] = genre_list
+                update.genres=session["genre_selected"]
+            
+            else:
+                update.genres=session["genre_selected"]
+
+
+            session["username"] = update.username
+            db.session.commit()
+        update.genres=session["genre_selected"]
+
+        return render_template("profile.html" , update=update, user=session["username"]) 
+
+        # return redirect(url_for("home"))
+def validate_chatroomID(chatroomID):
+    print(f"Validating chatroomID: {chatroomID}")
+    try: 
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM chatroom WHERE chatroomID = %s", (chatroomID,))
+        result = cur.fetchone()
+        print(f"Query result: {result}")
+        cur.close()
+        return bool(result)
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
     
-        update_username = request.form["edit_username"]
-        username_taken = User.query.filter_by(username=update_username).first()  
+def save_message(lyric, chatroomID, user_id):
+    try: 
+        with mysql.connection.cursor() as cur:
+            # First, validate the chatroomID
+            cur.execute("SELECT chatroomID FROM chatroom", (chatroomID,))
+            if not cur.fetchone():
+                print(f"Error: ChatroomID {chatroomID} does not exist")
+                return False
 
-        
-        update.password= request.form["edit_password"] 
-        update.bio = request.form["edit_bio"]
-        session["bio"] = update.bio
-        
-        #Check if username is taken
-        if username_taken and username_taken.id != update.id:
-            return render_template("profile.html", update=update, user=session["username"], error="Username already exists")  
-        update.username= update_username
-        #Update pfp
-        if request.files["pfp-select"]:
-            image = request.files["pfp-select"]
-            if image and image.filename != '':
-                random_hex = secrets.token_hex(8)
-                _, f_ext = os.path.splitext(image.filename)
-                image_path = random_hex + f_ext 
-                image.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], image_path))
-                update.image = image_path
-                session["pfp_path"] = image_path
-                print("image saved")
+            # If valid, insert the message
+            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", 
+                        (lyric, chatroomID, user_id))
+            mysql.connection.commit()
+            print(f"Message saved successfully: {lyric}, ChatroomID: {chatroomID}, UserID: {user_id}")
+            return True
+    except Exception as e:
+        print(f"Database error while saving message: {e}")
+        mysql.connection.rollback()  # Rollback the transaction on error
+        return False
+    
+def get_messages(chatroomID):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
+        messages = cur.fetchall()
+        mysql.connection.commit()
+        cur.close()
+        return messages
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
 
-        #Update genre selection
-        if request.form.get("edit_genre"):
-            update.genres = request.form.get("edit_genre")
-            genre_list = update.genres.split(',') 
-            User_genre.query.filter_by(user_id=update.id).delete()
-            for genre_name in genre_list:
-                genre = Music_genres.query.filter_by(music_genres=genre_name).first()
-                if genre:
-                    music = User_genre(genre_name=genre_name, user_id=update.id, genre_id=genre.id)
-                    db.session.add(music)
-
-            session["genre_selected"] = genre_list
-            update.genres = session["genre_selected"]
-        else:
-            update.genres = session["genre_selected"]
-
-        session["username"] = update.username
-        
-        db.session.commit()
-
-    return render_template("profile.html", update=update, user=session["username"])
-
-
-@app.route('/chatroom', methods=['GET', 'POST'])
+@app.route('/chats', methods=['GET', 'POST'])
 def chatroom():
-    
+    if 'user_id' not in session:
+        session['user_id'] = secrets.token_hex(16)
+        
     cur = mysql.connection.cursor()
     if request.method == 'POST':
         selected_genre = request.form.get('genre')
@@ -269,8 +264,9 @@ def chatroom():
         mysql.connection.commit()
         cur.close()
         if chatroom:
-            return redirect(url_for('chatroom', chatroomID=chatroom['chatroomID']))
-    cur.execute('SELECT chatroom_name FROM chatroom')
+            chatroomID, background_url = chatroom
+            return redirect(url_for('chat', chatroomID=chatroomID, background=background_url))
+    cur.execute('SELECT chatroomID, chatroom_name FROM chatroom')
     genres = cur.fetchall()
     mysql.connection.commit()
     cur.close()
@@ -304,9 +300,12 @@ def chat(chatroomID):
         background_url = chatroom['background_url'] if isinstance(chatroom, dict) else chatroom[1]
         # Render chatroom template with the correct background
         messages = get_messages(chatroomID)
-        return render_template('chat.html', room_name=chatroom_name, background=background_url, user_id=user_id, messages=messages)
+        return render_template('chat.html', room_name=chatroom_name, background=background_url, user_id=user_id, messages=messages, chatroomID=chatroomID)
     
     return "Chatroom not found", 404
+    
+    # messages = get_messages(chatroomID)
+    # return render_template('chat.html', messages=messages, chatroomID=chatroomID, user_id=user_id, background_url=background_url)
 
 
 @socketio.on('joined')
@@ -317,58 +316,48 @@ def handle_joined(data):
     
 @socketio.on('text')
 def handle_text(data):
-    text = data['text'] #Extracts the message text from the received data
+    lyric = data['text'] #Extracts the message text from the received data
     chatroomID = data['chatroomID']
-    username = session["username"]
+    user_id = session.get('user_id')
     pfp = session["pfp_path"]
-    
-    save_message(text, chatroomID, username) #Calls add_text() to save the message to the database
-    emit('message', {'username': username, 'text': text}, room=chatroomID) #Emits the message to all connected clients
+    if user_id is None:
+        print("User is not logged in")
+        return
+    if save_message(lyric, chatroomID, user_id):
+        emit('message', {'pfp':pfp, 'username': user_id, 'text': lyric}, room=chatroomID)#Emits the message to all connected clients
+    else:
+        print("Failed to save message")
+        
+@socketio.on('send_lyrics')
+def handle_send_lyrics(data):
+    chatroomID = data['chatroomID']
+    lyric = data['lyric']
+    selected_file = data['file']
+    username = data['username']
+
+    # Broadcast the message to everyone in the same chatroom
+    emit('receive_lyrics', {
+        'username': username,
+        'lyric': lyric,
+        'file': selected_file}, room=chatroomID)  # Broadcast to the chatroomID
     
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
     search_text = request.form.get('query', '')
     cursor = mysql.connection.cursor()
-
-    # Get the user's selected genres from session (it's a list of genre names)
-    genre_selected = session.get('genre_selected')
-
-    if search_text and genre_selected:
-        # Convert genre names to genre IDs
-        cursor.execute("SELECT id FROM music_genres WHERE music_genres IN %s", (tuple(genre_selected),))
-        genre_ids = cursor.fetchall()
-
-        if genre_ids:
-            # Extract genre IDs from the query result
-            genre_ids = [genre[0] for genre in genre_ids]  # Convert tuples to list of IDs
-
-            # Construct a query with placeholders for the genres
-            query = """
-            SELECT performer, title, lyric, source 
-            FROM songs 
-            WHERE (performer LIKE %s OR title LIKE %s OR lyric LIKE %s)
-            ORDER BY
-              CASE
-                WHEN genre_id IN %s THEN 1  -- Put selected genres at the top
-                ELSE 2  -- Non-selected genres go at the bottom
-              END,
-              title ASC  -- Sort alphabetically within each group
-            LIMIT 10
-            """
-            
-            search_pattern = f"%{search_text}%"
-            cursor.execute(query, (search_pattern, search_pattern, search_pattern, tuple(genre_ids)))
-            search_results = cursor.fetchall()
-        else:
-            search_results = []
+    if search_text:
+        query = """
+        SELECT performer, title, lyric, source FROM songs 
+        WHERE performer LIKE %s OR title LIKE %s OR lyric LIKE %s
+        ORDER BY title ASC LIMIT 10
+        """
+        search_pattern = f"%{search_text}%"
+        cursor.execute(query, (search_pattern, search_pattern, search_pattern))
+        search_results = cursor.fetchall()
     else:
         search_results = []
-
     cursor.close()
-
-    # Return the results as JSON
     return jsonify(search_results)
-
 
 if __name__ =="__main__":
     with app.app_context():
