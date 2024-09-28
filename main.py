@@ -59,6 +59,50 @@ class User_genre(db.Model):
     genre_id =  db.Column(db.Integer,db.ForeignKey('Music_genres.id'), nullable=False)
     genre_name = db.Column(db.Text, nullable=True)
 
+def validate_chatroomID(chatroomID):
+    print(f"Validating chatroomID: {chatroomID}")
+    try: 
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM chatroom WHERE chatroomID = %s", (chatroomID,))
+        result = cur.fetchone()
+        print(f"Query result: {result}")
+        cur.close()
+        return bool(result)
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
+    
+def save_message(lyric, chatroomID, user_id):
+    try: 
+        with mysql.connection.cursor() as cur:
+            # First, validate the chatroomID
+            cur.execute("SELECT chatroomID FROM chatroom", (chatroomID,))
+            if not cur.fetchone():
+                print(f"Error: ChatroomID {chatroomID} does not exist")
+                return False
+
+            # If valid, insert the message
+            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", 
+                        (lyric, chatroomID, user_id))
+            mysql.connection.commit()
+            print(f"Message saved successfully: {lyric}, ChatroomID: {chatroomID}, UserID: {user_id}")
+            return True
+    except Exception as e:
+        print(f"Database error while saving message: {e}")
+        mysql.connection.rollback()  # Rollback the transaction on error
+        return False
+    
+def get_messages(chatroomID):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
+        messages = cur.fetchall()
+        mysql.connection.commit()
+        cur.close()
+        return messages
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
 
 #Routes
 @app.route("/")
@@ -206,50 +250,6 @@ def profile():
         return render_template("profile.html" , update=update, user=session["username"]) 
 
         # return redirect(url_for("home"))
-def validate_chatroomID(chatroomID):
-    print(f"Validating chatroomID: {chatroomID}")
-    try: 
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM chatroom WHERE chatroomID = %s", (chatroomID,))
-        result = cur.fetchone()
-        print(f"Query result: {result}")
-        cur.close()
-        return bool(result)
-    except Exception as e:
-        print(f"Database error: {e}")
-        return False
-    
-def save_message(lyric, chatroomID, user_id):
-    try: 
-        with mysql.connection.cursor() as cur:
-            # First, validate the chatroomID
-            cur.execute("SELECT chatroomID FROM chatroom", (chatroomID,))
-            if not cur.fetchone():
-                print(f"Error: ChatroomID {chatroomID} does not exist")
-                return False
-
-            # If valid, insert the message
-            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", 
-                        (lyric, chatroomID, user_id))
-            mysql.connection.commit()
-            print(f"Message saved successfully: {lyric}, ChatroomID: {chatroomID}, UserID: {user_id}")
-            return True
-    except Exception as e:
-        print(f"Database error while saving message: {e}")
-        mysql.connection.rollback()  # Rollback the transaction on error
-        return False
-    
-def get_messages(chatroomID):
-    try:
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
-        messages = cur.fetchall()
-        mysql.connection.commit()
-        cur.close()
-        return messages
-    except Exception as e:
-        print(f"Database error: {e}")
-        return False
 
 @app.route('/chats', methods=['GET', 'POST'])
 def chatroom():
