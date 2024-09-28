@@ -171,7 +171,10 @@ body {
     <form method="POST">
         <ul id="messages" class="list-unstyled">
             {% for message in messages %}
-            <li>User: {{ message[0] }}</li>
+            <li class="chat-message">
+                <img src="http://127.0.0.1:5000/static/profile_pics/default.svg" class="chatpfp"> <span class="open">{{ message[2] }}</span>: {{ message[0] }}
+                <ion-icon name="play-circle-outline" class="play-icon" style="cursor:pointer;" data-file="{{ message[1] }}"></ion-icon>
+            </li>
             {% endfor %}
         </ul>
     </form>

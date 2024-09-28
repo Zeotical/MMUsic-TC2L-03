@@ -36,12 +36,12 @@ def validate_chatroomID(chatroomID):
         print(f"Database error: {e}")
         return False
 
-def save_message(content, chatroomID, user_id):
+def save_message_db(content, chatroomID, username, music): 
     if validate_chatroomID(chatroomID):
         try:
             cur = mysql.connection.cursor()
-            print(f"Inserting message: {content}, ChatroomID: {chatroomID}, UserID: {user_id}")
-            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", (content, chatroomID, user_id))
+            print(f"Inserting message: {content}, ChatroomID: {chatroomID}, Username: {username}, music: {music}")
+            cur.execute("INSERT INTO messages (content, chatroomID, username, music) VALUES (%s, %s, %s, %s)", (content, chatroomID, username, music))
             mysql.connection.commit()
             cur.close()
             return True
@@ -55,7 +55,7 @@ def save_message(content, chatroomID, user_id):
 def get_messages(chatroomID):
     try:
         cur = mysql.connection.cursor()
-        cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
+        cur.execute("SELECT content, music, username FROM messages WHERE chatroomID = %s ", (chatroomID,)) #ORDER BY created_at ASC
         messages = cur.fetchall()
         mysql.connection.commit()
         cur.close()
@@ -133,17 +133,17 @@ def save_message(lyric, chatroomID, user_id):
         mysql.connection.rollback()  # Rollback the transaction on error
         return False
     
-def get_messages(chatroomID):
-    try:
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
-        messages = cur.fetchall()
-        mysql.connection.commit()
-        cur.close()
-        return messages
-    except Exception as e:
-        print(f"Database error: {e}")
-        return False
+# def get_messages(chatroomID):
+#     try:
+#         cur = mysql.connection.cursor()
+#         cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
+#         messages = cur.fetchall()
+#         mysql.connection.commit()
+#         cur.close()
+#         return messages
+#     except Exception as e:
+#         print(f"Database error: {e}")
+#         return False
 
 #Routes
 @app.route("/")
@@ -360,8 +360,8 @@ def chat(chatroomID):
     if chatroom:
         chatroom_name = chatroom[0]
         background_url = chatroom[1]
-        messages = get_messages(chatroomID)  # Fetch messages safely with the fix
-        return render_template('chat.html', room_name=chatroom_name, background=background_url, user_id=user_id, messages=messages)
+        messages = get_messages(chatroomID)   # Fetch messages safely with the fix
+        return render_template('chat.html', room_name=chatroom_name, background=background_url, messages=messages)
 
     return "Chatroom not found", 404
     
@@ -379,10 +379,13 @@ def handle_joined(data):
     
 @socketio.on('text')
 def handle_text(data):
+    chatroomID = data['chatroomID']
     text = data['lyric']
     chatroomID = data['chatroomID']
     username = session['username']
     
+
+   
     # Store the message in the database
     add_text(chatroomID, text)
     
@@ -404,6 +407,35 @@ def handle_selected_lyrics(data):
         'pfp': pfp # Assuming you have a function to get the profile picture URL
     }, broadcast=True)
 
+def get_user_id(username):
+    try: 
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT id FROM user WHERE username = %s", (username,))
+        result = cur.fetchone()
+        mysql.connection.commit()
+        cur.close()
+        return result
+        # if result:  # Check if a result was returned
+        #     return True  # Chatroom exists
+        # else:
+        #     return False
+    except Exception as e:
+        print(f"Database error: {e}")
+        return False
+
+@app.route('/save', methods=['GET', 'POST'])
+def save():
+    if request.method == 'POST':
+        print("POST request received")
+        data = request.get_json()  # Get the JSON data from the request body
+        print("Received data:", data)  # Print it in the terminal
+        message = data.get('message')
+        chatroomID = data.get('chatroom')
+        username = data.get('username')
+        # user_id = get_user_id(username)
+        musicfile = data.get('musicfile')
+        save_message_db(message, chatroomID, username, musicfile)
+    return "Success", 200
 
 @app.route('/livesearch', methods=['POST'])
 def livesearch():

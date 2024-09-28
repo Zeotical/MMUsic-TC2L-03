@@ -1,7 +1,6 @@
 $(document).ready(function() {
     var socket = io.connect('http://' + location.hostname + ':' + location.port);
     var chatroomID = '{{ chatroomID }}'; // Ensure this matches across windows
-
     // Join the chatroom on connect
     socket.on('connect', function() {
         socket.emit('joined', { chatroomID: chatroomID });
@@ -52,7 +51,7 @@ $(document).ready(function() {
         });
 
         // Emit selected lyrics to server
-        socket.emit('selected-lyrics', { lyric: lyrics, file: selectedFile });
+        socket.emit('selected-lyrics', { lyric: lyrics, file: selectedFile, chatroomID: chatroomID });
 
         // Clear the search box after selecting the lyric
         $('#text').val('');
@@ -64,7 +63,7 @@ socket.on('message', function(data) {
     var username = data.username;
     var lyrics = data.lyric;
     var selectedFile = data.file;
-    
+
     // If the message is from the system, display the message only
     if (data.username === 'System') {
         $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');
@@ -85,6 +84,44 @@ socket.on('message', function(data) {
             console.log('Auto-playing the song');
         }).catch((error) => {
             console.error('Error playing the song:', error);
+        });
+
+        //Get chat id
+        // Get the current URL path
+        var path = window.location.pathname; 
+        // Split the path into segments
+        var segments = path.split('/'); 
+        // Get the last segment, which is the chatroom number
+        var chatroomID = segments[segments.length - 1]; 
+        console.log(chatroomID); 
+
+        //Get date
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+        var createdDate =  `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; 
+
+        $.ajax({
+            url: '/save',            
+            type: 'POST',            
+            contentType: 'application/json',  
+            data: JSON.stringify({    
+                message: lyrics,
+                chatroom: chatroomID,
+                musicfile: selectedFile,
+                username: username
+            }),
+            success: function(response) {
+                console.log('Success Post:', response);  
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);  
+            }
         });
     }
 });
