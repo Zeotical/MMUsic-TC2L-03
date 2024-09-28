@@ -322,31 +322,31 @@ def handle_joined(data):
     
 @socketio.on('text')
 def handle_text(data):
-    lyric = data['text'] #Extracts the message text from the received data
+    text = data['lyrics']
     chatroomID = data['chatroomID']
-    user_id = session.get('user_id')
-    pfp = session["pfp_path"]
-    if user_id is None:
-        print("User is not logged in")
-        return
-    if save_message(lyric, chatroomID, user_id):
-        emit('message', {'pfp':pfp, 'username': user_id, 'text': lyric,'chatroomID':chatroomID}, room=chatroomID)#Emits the message to all connected clients
-    else:
-        print("Failed to save message")
-        
-@socketio.on('send_lyrics')
-def handle_send_lyrics(data):
-    chatroomID = data['chatroomID']
-    lyric = data['lyric']
-    selected_file = data['file']
-    username = data['username']
-
-    # Broadcast the message to everyone in the same chatroom
-    emit('receive_lyrics', {
-        'username': username,
-        'lyric': lyric,
-        'file': selected_file,'chatroomID':chatroomID}, room=chatroomID)  # Broadcast to the chatroomID
+    username = session['username']
     
+    # Store the message in the database
+    
+    # Emit the message to all users in the chatroom
+    emit('message', {
+        'username': username,
+        'lyric': text,  # Assuming you're treating all text as lyrics here
+        'file': 'filename.mp3'  # Change this according to your logic
+    }, room=chatroomID)
+    
+@socketio.on('selected-lyrics')
+def handle_selected_lyrics(data):
+    pfp= session['pfp_path'] 
+
+    emit('message', {
+        'username': session['username'],
+        'lyric': data['lyric'],
+        'file': data['file'],
+        'pfp': pfp # Assuming you have a function to get the profile picture URL
+    }, broadcast=True)
+
+
 @app.route('/livesearch', methods=['POST'])
 def livesearch():
     search_text = request.form.get('query', '')
