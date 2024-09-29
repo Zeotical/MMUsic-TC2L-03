@@ -265,6 +265,15 @@ form button {
 
 }
 
+.btn-chatrooms ,.btn-logout{
+    margin: 0 auto;
+    font-size: xx-large;
+    border-radius: 5px;
+    cursor: pointer;
+    color: hsl(330, 50%, 98%);
+    background-color: #6d57e9;
+
+}
 
 
 .contain{
