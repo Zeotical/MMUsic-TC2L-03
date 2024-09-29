@@ -325,3 +325,12 @@ form button {
 .card:hover .card-inner{
     transform: rotateY(180deg);
 }
+
+.success {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    color: #fff; /* Text color */
+    font-size: 1.2em;
+    background-color: hsl(194, 49%, 44%); 
+}

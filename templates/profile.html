@@ -10,7 +10,7 @@
         
           {% for category, message in messages %}
           
-            <p class="{{ category }}">{{ message }}</p>
+            <p class="{{ category }}">{{ message }}</p> 
           {% endfor %}
     
       {% endif %}
@@ -149,6 +149,12 @@ function see_ps(){
   // Convert array to comma-separated string
   document.getElementById("edit_genre").value = selectedGenres.join(',');
 }
+</script>
+<script>
+
+$('#close').click(function() {
+    $('#success').removeClass('close');
+});
 </script>
  
 
