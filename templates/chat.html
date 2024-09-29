@@ -72,7 +72,7 @@ select {
 #modal-body {
     box-sizing: border-box;
 
-    background-color: #edeef6;    
+    background-color: transparent;    
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     display: flex;
     align-items: center;
@@ -136,17 +136,29 @@ body {
     background-size: cover;
     background-position: center;
 }
+
+.chat-message {
+    font-family: Tahoma, sans-serif; /* Change the font for messages */
+    letter-spacing: 1px;
+}
+
+.system-message {
+    font-family: Tahoma, sans-serif; /* Change to your preferred font */
+    color: black; /* Optional: customize text color */
+    font-weight: bold;
+    /* Optional: customize font size */
+}
 {% endblock %}
 
 {% block body %}
 <input type="hidden" id="hiddenChatroomID" value="{{ chatroomID }}">
-<div class="container; bg-dark" style="padding-top:10px; padding-bottom:20px">
+<div class="container; bg-dark" style="padding-top:10px; padding-bottom:10px">
     <div class="pg-header;">
-        <h1 style="text-align:center" class="display-3 text-white"><strong>MMUsic {{ room_name.capitalize() }}</strong></h1>
+        <h1 style="text-align:center; font-family: 'Trebuchet MS', sans-serif;" class="display-3 text-white"><strong>MMUsic {{ room_name.capitalize() }}</strong></h1>
     </div>
 </div>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="font-family: Verdana, sans-serif;">
     <a class="navbar-brand" href="#">MMUsic</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -181,7 +193,7 @@ body {
         <ul id="messages" class="list-unstyled">
             {% for message in messages %}
             <li class="chat-message">
-                <img src="http://127.0.0.1:5000/static/profile_pics/default.svg" class="chat_pfp"> <span class="oen">{{ message[2] }}</span>: {{ message[0] }}
+                <img src="http://127.0.0.1:5000/static/profile_pics/default.svg" class="chat_pfp"> <span class="oen"><strong>{{ message[2] }}</strong></span>: {{ message[0] }}
                 <ion-icon name="play-circle-outline" class="play-icon" style="cursor:pointer;" data-file="{{ message[1] }}"></ion-icon>
             </li>
             {% endfor %}
@@ -192,13 +204,13 @@ body {
 <div class="search-box; mx-auto" style="width: 1000px;margin-top: 10px">
     <div class="form-row justify-content-center  align-items-center">
         <div class="col-9">
-            <input type="text" name="text" placeholder="Type a song's lyric or title..." style="width: 100%;" id="text" autocomplete="off" class="form-control"/>
+            <input type="text" name="text" placeholder="Type a song's lyric or title..." style="width: 100%; font-family: 'Trebuchet MS', sans-serif;" id="text" autocomplete="off" class="form-control"/>
         </div>
         <div class="col-2">
             <button type="submit" class="btn btn-default; border border-primary bg-white" id="send">Send</button>
         </div>
         <div id="result">
-            <div class="col-md-5" style="position:relative; margin-top:0px; margin-left:-25px; width: 1000px">
+            <div class="col-md-5" style="position:relative; margin-top:0px; margin-left:-25px; width: 1000px; ">
                 <div class="list-group" id="show-list" style="display:none;">
                    
                 </div>
@@ -211,18 +223,17 @@ body {
 <audio id="audio_player" controls></audio>
 
 <div id="modal-body">
-
- <div id="modal_container">
-     <div id="modal">
-       <h1>Username: {{session["username"]}} </h1> 
-       <img src="{{url_for('static', filename='profile_pics/' + session['pfp_path'])}}" class="chatpfp" />
-       <h1>Music genres: <p>{{session['genre_selected']}}</p></h1>
-       <h1>Bio: {{session["bio"]}}</h1>
-       <button id="close">
-        close me
-       </button>
-      </div>
- </div>
+    <div id="modal_container">
+        <div id="modal">
+          <h1>Username: {{session["username"]}} </h1> 
+          <img src="{{url_for('static', filename='profile_pics/' + session['pfp_path'])}}" class="chatpfp" />
+          <h1>Music genres: <p>{{session['genre_selected']}}</p></h1>
+          <h1>Bio: {{session["bio"]}}</h1>
+          <button id="close">
+           close me
+          </button>
+         </div>
+    </div>
 </div>
 
 <script>

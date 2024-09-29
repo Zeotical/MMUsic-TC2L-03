@@ -69,7 +69,7 @@ socket.on('message', function(data) {
 
     // If the message is from the system, display the message only
     if (data.username === 'System') {
-        $('#messages').append('<li>' + data.username + ': ' + data.text + '</li>');
+        $('#messages').append('<li class="system-message">' + data.username + ': ' + data.text + '</li>');
     } else {
         // Display the received lyrics with a play icon
         $('#messages').append(`

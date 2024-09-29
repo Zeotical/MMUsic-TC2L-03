@@ -6,6 +6,14 @@ h1{
 text-align: center;
 }
 
+h1 span { 
+    background-color: white; 
+    padding: 10px;
+    padding-left: 13px;
+    padding-right: 13px;
+    border-radius: 10px;
+}
+
 body {
     background-image: url('https://media.giphy.com/media/6FjaNxfq8vHSQI0aVm/giphy.gif');
     background-size: 200px; /* Use the original image size */
