@@ -1,7 +1,6 @@
 {% extends"base1.html" %} 
 
 {% block body%} 
-<div class="register_bg">
 {% with messages = get_flashed_messages(with_categories=True) %}
       {% if messages %}
         
@@ -30,7 +29,7 @@
   </form>
 
   <form id="form2" action="{{url_for("register")}}" method="post">
-  <h1>Music Genres</h1> 
+   <h1>Music Genres</h1> 
 
     <div class="dropdown">
       <button class="music-btn" type="button" onclick="return false;">Select Your Top Music Genre</button>

@@ -57,9 +57,16 @@ select {
 }
 
 .chatpfp {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%; 
+}
+
+.chat_pfp {
     width: 30px;
     height: 30px;
     border-radius: 50%; 
+    padding-top:4px;
 }
 
 #modal-body {
@@ -174,7 +181,7 @@ body {
         <ul id="messages" class="list-unstyled">
             {% for message in messages %}
             <li class="chat-message">
-                <img src="http://127.0.0.1:5000/static/profile_pics/{{image_path}}" class="chatpfp"> <span class="open">{{ message[2] }}</span>: {{ message[0] }}
+                <img src="http://127.0.0.1:5000/static/profile_pics/default.svg" class="chat_pfp"> <span class="oen">{{ message[2] }}</span>: {{ message[0] }}
                 <ion-icon name="play-circle-outline" class="play-icon" style="cursor:pointer;" data-file="{{ message[1] }}"></ion-icon>
             </li>
             {% endfor %}
