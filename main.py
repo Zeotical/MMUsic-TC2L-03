@@ -369,9 +369,6 @@ def chat(chatroomID):
     # return render_template('chat.html', messages=messages, chatroomID=chatroomID, user_id=user_id, background_url=background_url)
 
 
-
-
-
 @socketio.on('joined')
 def handle_joined(data):
     chatroomID = data['chatroomID']

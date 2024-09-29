@@ -29,11 +29,10 @@
 
             <h1> Profile Image:</h1>
 
-                <img src="{{ url_for('static', filename='profile_pics/' + update.image)  }}"   alt="Profile Picture"style="width: 100px; height:100px";/>
+            <img src="{{ url_for('static', filename='profile_pics/' + update.image)  }}"   alt="Profile Picture"style="width: 100px; height:100px";/>
             
             
             <h1> Music Genre:</h1>
-            <p>{{session['genre_selected']}}</p>
 
             {% for genre in genres %}
               <p>{{ genre }}</p>

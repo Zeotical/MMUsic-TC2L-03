@@ -117,6 +117,7 @@ select {
        width:600px;
        max-width: 100%;
        text-align: center;
+       overflow:auto;
     }
     
 #modal h1 {
@@ -173,7 +174,7 @@ body {
         <ul id="messages" class="list-unstyled">
             {% for message in messages %}
             <li class="chat-message">
-                <img src="http://127.0.0.1:5000/static/profile_pics/default.svg" class="chatpfp"> <span class="open">{{ message[2] }}</span>: {{ message[0] }}
+                <img src="http://127.0.0.1:5000/static/profile_pics/{{image_path}}" class="chatpfp"> <span class="open">{{ message[2] }}</span>: {{ message[0] }}
                 <ion-icon name="play-circle-outline" class="play-icon" style="cursor:pointer;" data-file="{{ message[1] }}"></ion-icon>
             </li>
             {% endfor %}
@@ -208,7 +209,7 @@ body {
      <div id="modal">
        <h1>Username: {{session["username"]}} </h1> 
        <img src="{{url_for('static', filename='profile_pics/' + session['pfp_path'])}}" class="chatpfp" />
-       <h1>Music genres: {{session['genre_selected']}}</h1>
+       <h1>Music genres: <p>{{session['genre_selected']}}</p></h1>
        <h1>Bio: {{session["bio"]}}</h1>
        <button id="close">
         close me

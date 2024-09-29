@@ -1,7 +1,7 @@
 {% extends"base1.html" %} 
 
 {% block body%} 
-
+<div class="register_bg">
 {% with messages = get_flashed_messages(with_categories=True) %}
       {% if messages %}
         
@@ -186,15 +186,6 @@ function submitGenres() {
   document.getElementById("hidden_genres").value = selectedGenres.join(',');
 }
   </script>
-  
+
 {% endblock %} 
 
-<!-- $(".btn-register").click (function(event) {
-if {
-  username, session,{
-
-  }
-  alert("user alreadt here");
-} 
-
-}) -->
