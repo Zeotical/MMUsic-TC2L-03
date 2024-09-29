@@ -99,52 +99,6 @@ class user_genre(db.Model):
     user_id =  db.Column(db.Integer,db.ForeignKey('user.id'),  nullable=False)
     genre_id =  db.Column(db.Integer,db.ForeignKey('music_genres.id'), nullable=False)
     genre_name = db.Column(db.Text, nullable=True)
-    
-def validate_chatroomID(chatroomID):
-    print(f"Validating chatroomID: {chatroomID}")
-    try: 
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM chatroom WHERE chatroomID = %s", (chatroomID,))
-        result = cur.fetchone()
-        print(f"Query result: {result}")
-        cur.close()
-        return bool(result)
-    except Exception as e:
-        print(f"Database error: {e}")
-        return False
-    
-def save_message(lyric, chatroomID, user_id):
-    try: 
-        with mysql.connection.cursor() as cur:
-            # First, validate the chatroomID
-            cur.execute("SELECT chatroomID FROM chatroom", (chatroomID,))
-            if not cur.fetchone():
-                print(f"Error: ChatroomID {chatroomID} does not exist")
-                return False
-
-            # If valid, insert the message
-            cur.execute("INSERT INTO messages (content, chatroomID, user_id) VALUES (%s, %s, %s)", 
-                        (lyric, chatroomID, user_id))
-            mysql.connection.commit()
-            print(f"Message saved successfully: {lyric}, ChatroomID: {chatroomID}, UserID: {user_id}")
-            return True
-    except Exception as e:
-        print(f"Database error while saving message: {e}")
-        mysql.connection.rollback()  # Rollback the transaction on error
-        return False
-    
-# def get_messages(chatroomID):
-#     try:
-#         cur = mysql.connection.cursor()
-#         cur.execute("SELECT content, created_at, user_id FROM messages WHERE chatroomID = %s ORDER BY created_at ASC", (chatroomID,))
-#         messages = cur.fetchall()
-#         mysql.connection.commit()
-#         cur.close()
-#         return messages
-#     except Exception as e:
-#         print(f"Database error: {e}")
-#         return False
-
 #Routes
 @app.route("/")
 def home():
@@ -295,28 +249,6 @@ def profile():
         flash('Profile updated!', 'success')
     return render_template("profile.html", update=update, user=session["username"],genres=genre_list)
 
-
-        #     session["username"] = update.username
-        #     db.session.commit()
-        # update.genres=session["genre_selected"]
-
-        # return render_template("profile.html" , update=update, user=session["username"]) 
-
-        # return redirect(url_for("home"))
-
-def add_text(chatroomID, content):
-    try:
-        print(f"Attempting to insert message: '{content}' into chatroom: {chatroomID}")
-        query = "INSERT INTO messages (chatroomID, content) VALUES (%s, %s)" #insert typed messages to database(chat) table(messages) column(content)
-        cur = mysql.connection.cursor()
-        cur.execute(query, (chatroomID, content))
-        mysql.connection.commit()
-        print("Message successfully added.")
-    except Exception as e:
-        print(f"Error saving message to database: {e}")
-    finally:
-        cur.close()
-
 @app.route('/chats', methods=['GET', 'POST'])
 def chatroom():
     if 'user_id' not in session:
@@ -340,18 +272,6 @@ def chatroom():
     
 @app.route('/chatroom/<int:chatroomID>', methods=['GET', 'POST'])
 def chat(chatroomID):
-    if 'user_id' not in session:
-        session['user_id'] = secrets.token_hex(16)
-
-    user_id = session['user_id']
-    if request.method == 'POST':
-        content = request.form.get('content')
-        if content:
-            if save_message(content, chatroomID, user_id):
-                return jsonify({"status": "success"})
-            else:
-                return jsonify({"status": "error", "message": "Failed to save message"}), 400
-    
     cur = mysql.connection.cursor()
     cur.execute("SELECT chatroom_name, background_url FROM chatroom WHERE chatroomID = %s", (chatroomID,))
     chatroom = cur.fetchone()
@@ -376,24 +296,6 @@ def handle_joined(data):
     print(f"User joined chatroom: {chatroomID}")  # Debugging log
 
     emit('message', {'username': 'System', 'text': 'Welcome to Chatroom'}, room=chatroomID)
-
-@socketio.on('text')
-def handle_text(data):
-    chatroomID = data['chatroomID']
-    text = data['lyric']
-    chatroomID = data['chatroomID']
-    username = session['username']
-    print(f"Received message for chatroom {chatroomID}: {data['text']}")
-
-    # Store the message in the database
-    add_text(chatroomID, text)
-    
-    # Emit the message to all users in the chatroom
-    emit('message', {
-        'username': username,
-        'lyric': text,  # Assuming you're treating all text as lyrics here
-        'file': 'filename.mp3'  # Change this according to your logic
-    }, room=chatroomID)
     
 @socketio.on('selected-lyrics')
 def handle_selected_lyrics(data):
@@ -409,22 +311,6 @@ def handle_selected_lyrics(data):
         'file': data['file'],
         'pfp': pfp # Assuming you have a function to get the profile picture URL
     }, room=chatroomID)
-
-def get_user_id(username):
-    try: 
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT id FROM user WHERE username = %s", (username,))
-        result = cur.fetchone()
-        mysql.connection.commit()
-        cur.close()
-        return result
-        # if result:  # Check if a result was returned
-        #     return True  # Chatroom exists
-        # else:
-        #     return False
-    except Exception as e:
-        print(f"Database error: {e}")
-        return False
 
 @app.route('/save', methods=['GET', 'POST'])
 def save():
